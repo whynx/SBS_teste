@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Agendamento - Tela Inicial</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+  
+body {
+  font-family: Verdana, sans-serif;
+  background:  #e8e8e0;
+  color: #2d3748;
+  line-height: 1.6;
+  transition: background 0.4s ease, color  0.2s ease;
+  animation: fadeIn 0.3s ease;
+  border-top: 25px solid #3a4d4ee6;
+  border-radius: 20px; 
+}
+
+    @keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+    header {
+      background: linear-gradient(135deg, #93ad8e, #739970);
+      padding: 30px 20px;
+      text-align: center;
+      color: #fff;
+    }
+
+    header h1 { margin: 0; font-size: 2.5rem; }
+    header p { margin-top: 8px; font-size: 1.3rem; opacity: 0.9; }
+
+    nav {
+  background: linear-gradient(135deg, #fffdf6,  #fffdf6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+nav img {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+
+nav .links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+
+
+nav {
+  background: linear-gradient(135deg, #fffdf6,  #fffdf6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+nav img {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+
+nav .links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+
+
+nav a {
+  color: #345c46;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-size: 1rem;
+  border-radius: 12px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+}
+
+nav a:hover {
+  background-color: rgb(243, 246, 243);
+  transform: translateY(-2px);
+}
+
+
+    main { padding: 20px; max-width: 1100px; margin: auto; }
+    main h1 { padding: 20px; color: #739970; text-align: center; font-size: 28px; }
+
+    .consulta {
+      background: #5e7468e6; backdrop-filter: blur(6px);
+      padding: 20px; border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      text-align: center; color: #feffe0; margin: 15px 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .consulta:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+    .consulta strong { font-size: 1.2rem; color: #e8c889; }
+    .consulta button {
+      margin-top: 12px; padding: 8px 14px; font-size: 14px;
+      background-color: #d33; color: #fff; border: none;
+      border-radius: 6px; cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .consulta button:hover { background-color: #a00; }
+
+    .vacina {
+      background: #5e7468e6; backdrop-filter: blur(6px);
+      padding: 20px; border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      text-align: center; color: #feffe0; margin: 15px 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .vacina:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+    .vacina strong { font-size: 1.2rem; color: #e8c889; }
+    .vacina button {
+      margin-top: 12px; padding: 8px 14px; font-size: 14px;
+      background-color: #d33; color: #fff; border: none;
+      border-radius: 6px; cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .vacina button:hover { background-color: #a00; }
+
+body.dark-mode { 
+  background: #3a4d4e;
+  color: #e8e8e0;
+}
+
+body.dark-mode nav {
+  background: linear-gradient(135deg, #2c2c2c, #2c2c2c);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+body.dark-mode nav a {
+  color: #fff9e0;
+}
+
+    body.dark-mode nav a:hover {
+      background-color: #3a4d4ee6;
+      transform: translateY(-2px);
+    }
+
+    body.dark-mode .search-container {
+      background: #617966;
+      border: 1px solid #ece6cd;
+    }
+
+    body.dark-mode .search-container i,
+    body.dark-mode .search-container input {
+      color: #fff9e0;
+    }
+
+    body.dark-mode .btn-cadastro {
+      background-color: #4a5c4e;
+      color: #fff9e0;
+    }
+
+    body.dark-mode .btn-cadastro:hover {
+      background-color: #5e7468;
+    }
+
+    body.dark-mode .btn-darkmode {
+      background: #3a4d4e;
+      color: #fff9e0;
+    }
+
+    body.dark-mode .btn-darkmode:hover {
+      background: #5e7468;
+    }
+
+    body.dark-mode .grid {
+      background: #2e3b31;
+    }
+
+    body.dark-mode .grid h2 {
+      color: #617966;
+    }
+
+    body.dark-mode .servico {
+        background: #5e7468e6;
+      color: #fff9e0;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+
+    body.dark-mode main h2,
+    body.dark-mode main h3,
+    body.dark-mode main p {
+      color: #fff9e0;
+    }
+
+    body.dark-mode footer {
+      background-color: #2e3b31;
+      color: #e8c889;
+      border-top: 25px solid #4a5c4e;
+    }
+
+    .btn-cadastro, .btn-darkmode {
+      border: none;
+      padding: 10px 18px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-cadastro {
+      background: #345c46;
+      color: #feffe0;
+    }
+
+    .btn-cadastro:hover {
+      background-color: #35473d;
+      transform: scale(1.05);
+    }
+
+    .btn-darkmode {
+      background: #444;
+      color: #fff;
+    }
+
+    .btn-darkmode:hover {
+      background: #666;
+    }
+
+body.dark-mode main p {
+  color: #e0e0e0; 
+}
+
+body.dark-mode main h1 {
+  color:  #fff9e0;
+}
+
+  </style>
+</head>
+<body>
+
+
+<nav>
+  <img src="imagens/logocolorida.png" class="header">
+  <a href="telainicio.html"><i class="fas fa-home"></i> Início</a>
+  <a href="agendamento.html"><i class="fa fa-calendar"></i> Agendamento</a>
+  <a href="servidor.html"><i class="fas fa-phone"></i> Servidor</a>
+
+    <button class="btn-darkmode" id="toggleDarkMode">
+      <i class="fas fa-moon"></i> Modo Escuro
+    </button>
+</nav>
+
+<main>
+  <h1>Consultas Agendadas</h1>
+  <div id="listaConsultas"></div>
+    <h1>Vacinas Agendadas</h1>
+    <div id="listaVacinas"></div>
+</main>
+
+<script>
+
+window.onload = function() {
+
+  const nomeUsuario = localStorage.getItem("usuarioNome");
+  if (nomeUsuario) {
+    const btnCadastro = document.querySelector(".btn-cadastro");
+    if (btnCadastro) {
+      btnCadastro.innerHTML = `<i class="fas fa-user"></i> ${nomeUsuario}`;
+      btnCadastro.onclick = null;
+      btnCadastro.style.cursor = "default";
+    }
+  }
+
+  if(localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+  }
+
+
+  document.getElementById("toggleDarkMode").addEventListener("click", function() {
+    document.body.classList.toggle("dark-mode");
+    if(document.body.classList.contains("dark-mode")) {
+      localStorage.setItem("darkMode", "enabled");
+    } else {
+      localStorage.setItem("darkMode", "disabled");
+    }
+  });
+};
+
+
+
+function carregarConsultas() {
+  const lista = document.getElementById("listaConsultas");
+  const consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+
+  if (consultas.length === 0) {
+    lista.innerHTML = "<p>Nenhuma consulta agendada.</p>";
+    return;
+  }
+
+  lista.innerHTML = "";
+  consultas.forEach((c, index) => {
+    const div = document.createElement("div");
+    div.className = "consulta";
+    div.innerHTML = `
+      <strong>${c.nome}</strong><br>
+      Especialidade: ${c.especialidade}<br>
+      Data: ${c.data} às ${c.hora}<br>
+       Status: <span>${c.confirmada ? "✅ Confirmada" : "⏳ Pendente"}</span><br>
+      <button onclick="cancelarConsulta(${index})">Cancelar</button>
+    `;
+    lista.appendChild(div);
+  });
+}
+
+function cancelarConsulta(index) {
+  Swal.fire({
+    title: "Tem certeza?",
+    text: "Você deseja realmente cancelar esta consulta?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor:  "#739970", 
+    cancelButtonColor:"#d33",
+    confirmButtonText: "Sim, cancelar",
+    cancelButtonText: "Não"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+      consultas.splice(index, 1);
+      localStorage.setItem("consultas", JSON.stringify(consultas));
+      carregarConsultas();
+
+      Swal.fire({
+        title: "Cancelada!",
+        text: "Sua consulta foi cancelada com sucesso.",
+        icon: "success",
+        confirmButtonText: "OK" ,
+        confirmButtonColor:  "#739970",
+      });
+    }
+  });
+}
+
+
+function carregarVacinas() {
+  const lista = document.getElementById("listaVacinas");
+  const vacinas = JSON.parse(localStorage.getItem("agendamentosVacinas")) || [];
+
+  if (vacinas.length === 0) {
+    lista.innerHTML = "<p>Nenhum agendamento de vacina encontrado.</p>";
+    return;
+  }
+
+  lista.innerHTML = "";
+  vacinas.forEach((v, index) => {
+    const div = document.createElement("div");
+    div.className = "vacina card";
+    div.innerHTML = `
+      <strong>${v.nome}</strong> (${v.categoria || "Geral"})<br>
+      Vacina: ${v.vacina}<br>
+      Data: ${v.data}${v.hora ? ` às ${v.hora}` : ""}<br>
+      Status: <span>${v.confirmada ? "✅ Confirmada" : "⏳ Pendente"}</span><br>
+      <button onclick="cancelarVacina(${index})">Cancelar</button>
+    `;
+    lista.appendChild(div);
+  });
+}
+
+function cancelarVacina(index) {
+  Swal.fire({
+    title: "Tem certeza?",
+    text: "Você deseja realmente cancelar este agendamento da vacina?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#739970",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sim, cancelar",
+    cancelButtonText: "Não"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let vacinas = JSON.parse(localStorage.getItem("agendamentosVacinas")) || [];
+      vacinas.splice(index, 1);
+      localStorage.setItem("agendamentosVacinas", JSON.stringify(vacinas));
+      carregarVacinas();
+
+      Swal.fire({
+        title: "Cancelada!",
+        text: "Seu agendamento de vacina foi cancelado com sucesso.",
+        icon: "success",
+        confirmButtonColor: "#739970"
+      });
+    }
+  });
+}
+
+carregarConsultas();
+carregarVacinas();
+
+
+
+</script>
+</body>
+</html>

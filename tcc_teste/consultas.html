@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Consultas</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+
+body {
+   font-family:  Verdana, sans-serif;
+  margin: 0;
+  background:  #e8e8e0;
+  color: #2d3748;
+  transition: background 0.4s ease, color 0.4s ease;
+  line-height: 1.6;
+  animation: fadeIn 0.6s ease;
+   border-top: 25px solid #3a4d4ee6;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+header {
+  background: linear-gradient(135deg, #42533f, #739970);
+  padding: 40px 20px;
+  text-align: center;
+  color: #fff;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 600;
+}
+
+header p {
+  margin-top: 8px;
+  font-size: 1.2rem;
+  opacity: 0.85;
+}
+
+
+
+nav {
+  background: linear-gradient(135deg, #fffdf6,  #fffdf6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+nav a {
+  color: #345c46;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-size: 1rem;
+  border-radius: 12px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+nav .links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+
+nav a:hover {
+    background-color: #f3f6f3;
+  transform: translateY(-2px);
+}
+
+nav img {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+
+main {
+  padding: 50px 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+main h2 {
+  font-size: 2.2rem;
+  padding: 20px;
+  color:#345c46;
+  text-align: center;
+}
+
+
+main h1 {
+  padding: 20px;
+  color: #739970; 
+  text-align: center;
+  font-size: 28px;
+}
+
+main p {
+
+  text-align: center;
+  font-size: 20px;
+  color: #000000;
+}
+
+.dias-semana {
+  display: flex;
+  justify-content: center;   
+  flex-wrap: wrap;           
+  gap: 12px;                 
+  margin-top: 20px;
+}
+
+.dias-semana .btn {
+  display: inline-block;
+  min-width: 160px;          
+  text-align: center;
+}
+
+
+
+.card {
+  backdrop-filter: blur(6px);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+.card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+.card i { font-size: 1.5rem; color: #feffe0; margin-bottom: 12px; }
+.card h3 { margin-top: 10px; color: #feffe0;font-size: 1.3rem; }
+.card p { margin-top: 10px; color: #feffe0; font-size: 1.3rem; }
+.card-verde { background: #5e7468e6; }
+.card-azul { background:  #345c46;  }
+
+
+
+.servicos {
+  display: none;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.servico {
+  background: #5e7468e6;
+  backdrop-filter: blur(6px);
+  padding: 25px;
+  
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+.servico:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+.servico i { font-size: 1.5rem; color: #feffe0; margin-bottom: 12px; }
+.servico h3 { margin-top: 10px; color:#feffe0; font-size: 1.3rem; }
+.servico p { margin-top: 10px; color: #feffe0; font-size: 1.1rem; }
+
+
+.btn {
+  display: inline-block;
+  justify-content: center;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #345c46;
+  color: #fff;
+  align-items: center;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+body.dark-mode { 
+  background: #3a4d4e;
+  color: #e8e8e0;
+}
+
+body.dark-mode nav {
+  background: linear-gradient(135deg, #2c2c2c, #2c2c2c);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+body.dark-mode nav a {
+  color: #fff9e0;
+}
+body.dark-mode nav a:hover {
+  background-color: #3a4d4ee6;
+  transform: translateY(-2px);
+}
+
+body.dark-mode .btn-cadastro:hover {
+  background-color: #5e7468;
+}
+
+body.dark-mode .btn-darkmode {
+  background: #3a4d4e;
+  color: #fff9e0;
+}
+body.dark-mode .btn-darkmode:hover {
+  background: #5e7468;
+}
+
+body.dark-mode .grid {
+  background: #2e3b31;
+}
+
+body.dark-mode .grid h2 {
+  color:  #fff9e0;
+}
+body.dark-mode .card {
+  background: #3a4d4e;
+
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+
+
+
+
+body.dark-mode footer {
+  background-color: #2e3b31;
+  color: #e8c889;
+  border-top: 25px solid #4a5c4e;
+}
+
+.btn-cadastro, .btn-darkmode {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.btn-cadastro {
+   background: #345c46;
+  color: #feffe0;
+}
+.btn-cadastro:hover {
+  background-color:  #35473d;
+  transform: scale(1.05);
+}
+.btn-darkmode {
+  background: #444;
+  color: #fff;
+}
+.btn-darkmode:hover {
+  background: #666;
+}
+
+
+
+
+
+.btn:hover { background: #35473d; }
+
+
+
+.btnmodal {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color:  #35473d;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
+}
+.btnmodal:hover { background-color:  #475e51; }
+
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+
+
+.modal.show { display: flex; animation: fadeIn 0.3s ease; }
+.modal-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+.modal-content h2 { color: #3f4640; margin-bottom: 15px; font-size: 22px; }
+.modal-content p { color: #3f4640; font-size: 18px; margin-bottom: 15px; }
+.modal-content input {
+  width: 90%; padding: 10px; margin: 8px 0;
+  border: 1px solid #ccc; border-radius: 6px; font-size: 15px;
+}
+
+
+.close { float: right; font-size: 28px; cursor: pointer; color: #739970; }
+.close:hover { color: #5a7a55; }
+
+
+
+
+body.dark-mode .card {
+   backdrop-filter: blur(6px);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+body.dark-mode .card-verde{
+  background: #36463de6;
+   color: #ddd;
+  border: 1px solid #444;
+}
+
+body.dark-mode .card-azul {
+  background: #435a5ce6;
+  color: #ddd;
+  border: 1px solid #444;
+}
+body.dark-mode .card h3 {
+  color:  #fff9e0;
+}
+body.dark-mode .card p {
+  color:  #fff9e0; 
+}
+
+
+body.dark-mode .servico {
+  background: #5e7468e6;
+  backdrop-filter: blur(6px);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+body.dark-mode .servico h3 {
+  color:  #fff9e0;
+}
+body.dark-mode .servico p {
+  color:  #fff9e0;
+}
+
+
+body.dark-mode .btn {
+  background:#345c46;
+  color:   #ffffff;
+}
+body.dark-mode .btn:hover {
+  background: #284736;
+}
+body.dark-mode .btnmodal {
+  background-color:  #35473d;
+  color: #fff;
+}
+body.dark-mode .btnmodal:hover {
+  background-color:  #35473d;
+}
+
+
+body.dark-mode .modal-content {
+  background: #2c2c2c;
+  color: #e0e0e0;
+  border: 1px solid #444;
+}
+body.dark-mode .modal-content h2,
+body.dark-mode .modal-content p {
+  color: #e0e0e0;
+}
+body.dark-mode .modal-content input {
+  background: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+body.dark-mode .close {
+  color: #739970;
+}
+body.dark-mode .close:hover {
+  color: #5a7a55;
+}
+
+body.dark-mode footer {
+  background-color: #2c2c2c;
+  color: #bbb;
+}
+
+.btnmodal {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #739970;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
+}
+.btnmodal:hover {
+  background-color: #5a7a55;
+}
+
+
+.especialidade-destaque {
+  font-weight: bold;
+  color: #3f4640;
+}
+
+.especialidade-destaque {
+  color:#3f4640;
+  font-weight: bold;
+}
+
+body.dark-mode main p {
+  color: #e0e0e0; 
+}
+
+body.dark-mode main h2 {
+  color:  #fff9e0;
+}
+
+
+.vacinacao {
+  border-radius: 20px;
+  padding: 30px;
+  margin-top: 40px;
+  text-align: center;
+}
+.vacinacao h2 {
+  margin-top: 20px;
+  color:#3a4d4ee6;
+  font-size: 2.4rem;
+}
+.vacinacao p {
+  margin-top: 10px;
+  align-items: left;
+  color: #3a4d4ee6;
+  font-size: 1.2rem;
+}
+
+body.dark-mode .vacinacao {
+
+  color: #fff9e0;
+}
+
+body.dark-mode .vacinacao h2 {
+  color: #fff9e0;
+}
+body.dark-mode .vacinacao p {
+ color: #fff9e0;
+}
+
+
+
+  </style>
+</head>
+<body>
+
+
+
+<nav>
+   <img src="imagens/logocolorida.png" class="nav">
+  <a href="telainicio.html"><i class="fas fa-home"></i> Início</a>
+  <a href="consultas.html"><i class="fas fa-stethoscope"></i> Consultas</a>
+  <a href="exames.html"><i class="fas fa-vials"></i> Exames</a>
+  <a href="vacinacao.html"><i class="fas fa-syringe"></i> Vacinação</a>
+
+  <div>
+    <button class="btn-darkmode" id="toggleDarkMode">
+      <i class="fas fa-moon"></i> Modo Escuro
+    </button>
+  </div>
+</nav>
+
+<main>
+<h2>Especialistas disponíveis</h2>
+<div class="dias-semana">
+    <button class="btn" onclick="mostrarEspecialistas('segunda')">Segunda-feira</button>
+    <button class="btn" onclick="mostrarEspecialistas('terca')">Terça-feira</button>
+    <button class="btn" onclick="mostrarEspecialistas('quarta')">Quarta-feira</button>
+    <button class="btn" onclick="mostrarEspecialistas('quinta')">Quinta-feira</button>
+    <button class="btn" onclick="mostrarEspecialistas('sexta')">Sexta-feira</button>
+  </div>
+
+
+<div id="segunda" class="servicos">
+  <div class="servico">
+    <i class="fa-solid fa-user-md"></i>
+    <h3>Clínico Geral</h3>
+    <p>Atendimento básico e encaminhamentos.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Clínico Geral')">Agendar</button>
+  </div>
+  <div class="servico">
+    <i class="fa-solid fa-heart-pulse"></i>
+    <h3>Cardiologia</h3>
+    <p>Saúde do coração e exames cardiológicos.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Cardiologia')">Agendar</button>
+  </div>
+  <div class="servico">
+    <i class="fa-solid fa-eye"></i>
+    <h3>Oftalmologia</h3>
+    <p>Exames de visão e tratamento ocular.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Oftalmologia')">Agendar</button>
+  </div>
+</div>
+
+
+<div id="terca" class="servicos">
+  <div class="servico">
+    <i class="fa-solid fa-bone"></i>
+    <h3>Ortopedia</h3>
+    <p>Tratamento de ossos, músculos e articulações.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Ortopedia')">Agendar</button>
+  </div>
+  <div class="servico">
+    <i class="fa-solid fa-brain"></i>
+    <h3>Neurologia</h3>
+    <p>Diagnóstico e tratamento de doenças neurológicas.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Neurologia')">Agendar</button>
+  </div>
+  <div class="servico">
+    <i class="fa-solid fa-lungs"></i>
+    <h3>Pneumologia</h3>
+    <p>Cuidados com o sistema respiratório.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Pneumologia')">Agendar</button>
+  </div>
+</div>
+
+
+<div id="quarta" class="servicos">
+  <div class="servico">
+    <i class="fa-solid fa-child"></i>
+    <h3>Pediatria</h3>
+    <p>Atendimento especializado para crianças.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Pediatria')">Agendar</button>
+  </div>
+  <div class="servico">
+    <i class="fa-solid fa-person-dress"></i>
+    <h3>Ginecologia</h3>
+    <p>Saúde da mulher e acompanhamento ginecológico.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Ginecologia')">Agendar</button>
+  </div>
+  <div class="servico">
+    <i class="fa-solid fa-user-nurse"></i>
+    <h3>Dermatologia</h3>
+    <p>Tratamento de pele e doenças dermatológicas.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Dermatologia')">Agendar</button>
+  </div>
+</div>
+
+
+<div id="quinta" class="servicos">
+  <div class="servico">
+    <i class="fa-solid fa-dna"></i>
+    <h3>Endocrinologia</h3>
+    <p>Tratamento de hormônios e metabolismo.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Endocrinologia')">Agendar</button>
+  </div>
+  <div class="servico">
+  <i class="fa-solid fa-bowl-food"></i>
+    <h3>Gastroenterologia</h3>
+    <p>Saúde do sistema digestivo.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Gastroenterologia')">Agendar</button>
+  </div>
+  <div class="servico">
+    <i class="fa-solid fa-ear-listen"></i>
+    <h3>Otorrinolaringologia</h3>
+    <p>Tratamento de ouvido, nariz e garganta.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Otorrinolaringologia')">Agendar</button>
+  </div>
+</div>
+
+
+<div id="sexta" class="servicos">
+  <div class="servico">
+    <i class="fa-solid fa-ribbon"></i>
+    <h3>Oncologia</h3>
+    <p>Tratamento e acompanhamento de câncer.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Oncologia')">Agendar</button>
+  </div>
+  <div class="servico">
+    <i class="fa-solid fa-brain"></i>
+    <h3>Psiquiatria</h3>
+    <p>Saúde mental e acompanhamento psicológico.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Psiquiatria')">Agendar</button>
+  </div>
+  <div class="servico">
+    <i class="fa-solid fa-syringe"></i>
+    <h3>Imunologia</h3>
+    <p>Tratamento de alergias e sistema imunológico.</p>
+    <button type="button" class="btn" onclick="agendarConsulta('Imunologia')">Agendar</button>
+  </div>
+</div>
+
+
+<div id="modalAgendamento" class="modal" role="dialog" aria-labelledby="especialidadeSelecionada">
+  <div class="card-azul modal-content">
+    <span class="close" onclick="fecharModal()">&times;</span>
+    <h2>Agendamento de Consulta</h2>
+    <p id="especialidadeSelecionada"></p>
+
+    <label for="nomePaciente">Nome:</label><br>
+    <input type="text" placeholder="Digite seu nome" id="nomePaciente"><br><br>
+
+    <label for="dataConsulta">Data:</label><br>
+    <input type="date" id="dataConsulta"><br><br>
+
+    <label for="horaConsulta">Horário:</label><br>
+    <input id="horaConsulta" type="time" min="08:00" max="16:00" step="1800" required><br>
+    <p>Escolha um horário (somente entre 08h e 16h):</p>
+
+    <button type="button" class="btnmodal" onclick="confirmarAgendamento()">Confirmar</button>
+  </div>
+</div>
+
+<div class="vacinacao">
+  <h2>Conheça nossos especialistas</h2>
+  <p><br></p>
+</div>
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  document.querySelectorAll('.servicos').forEach(div => div.style.display = 'none');
+
+
+  if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+  }
+
+
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const nomeUsuario = usuarioLogado ? usuarioLogado.nome : localStorage.getItem("usuarioNome");
+
+
+  if (nomeUsuario) {
+    const elNome = document.getElementById("nomePaciente");
+    if (elNome) {
+      elNome.value = nomeUsuario;
+    }
+  }
+});
+
+
+
+function mostrarEspecialistas(dia) {
+  document.querySelectorAll('#segunda, #terca, #quarta, #quinta, #sexta')
+    .forEach(div => div.style.display = 'none');
+  const elementoDia = document.getElementById(dia);
+  if (elementoDia) {
+    elementoDia.style.display = 'grid';
+  }
+}
+
+
+const disponibilidade = {
+  "Clínico Geral": ["Segunda-feira"],
+  "Cardiologia": ["Segunda-feira"],
+  "Oftalmologia": ["Segunda-feira"],
+  "Ortopedia": ["Terça-feira"],
+  "Neurologia": ["Terça-feira"],
+  "Pneumologia": ["Terça-feira"],
+  "Pediatria": ["Quarta-feira"],
+  "Ginecologia": ["Quarta-feira"],
+  "Dermatologia": ["Quarta-feira"],
+  "Endocrinologia": ["Quinta-feira"],
+  "Gastroenterologia": ["Quinta-feira"],
+  "Otorrinolaringologia": ["Quinta-feira"],
+  "Oncologia": ["Sexta-feira"],
+  "Psiquiatria": ["Sexta-feira"],
+  "Imunologia": ["Sexta-feira"]
+};
+
+// Nomes dos dias para validação de calendário
+const nomesDias = [
+  "Domingo",
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado"
+];
+
+// 2. Evento executado assim que a página carrega
+document.addEventListener("DOMContentLoaded", function() {
+  
+  // Oculta blocos de serviços por padrão
+  document.querySelectorAll('.servicos').forEach(div => div.style.display = 'none');
+
+  // Aplica preferência do Dark Mode
+  if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+  }
+
+  // Verifica usuário logado no localStorage
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const nomeUsuario = usuarioLogado ? usuarioLogado.nome : localStorage.getItem("usuarioNome");
+
+  // Atualiza campo do formulário de agendamento com o nome do paciente
+  if (nomeUsuario) {
+    const elNome = document.getElementById("nomePaciente");
+    if (elNome) {
+      elNome.value = nomeUsuario;
+    }
+
+    // Atualiza a barra de navegação (exibe nome / oculta botão de login)
+    const btnAcesso = document.getElementById("btnAcesso");
+    const areaUsuario = document.getElementById("areaUsuario");
+    const nomeUsuarioTexto = document.getElementById("nomeUsuarioTexto");
+
+    if (btnAcesso) btnAcesso.style.display = "none";
+    if (areaUsuario) areaUsuario.style.display = "inline-block";
+
+    const primeiroNome = nomeUsuario.split(" ")[0];
+    if (nomeUsuarioTexto) nomeUsuarioTexto.textContent = primeiroNome;
+  }
+
+  // Preenche a data de HOJE no campo de agendamento mantendo fuso local
+  const elData = document.getElementById("dataConsulta");
+  if (elData) {
+    const hojeLocal = new Date();
+    const ano = hojeLocal.getFullYear();
+    const mes = String(hojeLocal.getMonth() + 1).padStart(2, '0');
+    const dia = String(hojeLocal.getDate()).padStart(2, '0');
+    
+    const dataFormatada = `${ano}-${mes}-${dia}`;
+    elData.value = dataFormatada;
+    elData.min = dataFormatada; // Impede seleção de datas passadas
+  }
+
+  // Evento do botão Dark Mode
+  const btnDarkMode = document.getElementById("toggleDarkMode");
+  if (btnDarkMode) {
+    btnDarkMode.addEventListener("click", function() {
+      document.body.classList.toggle("dark-mode");
+      if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("darkMode", "enabled");
+      } else {
+        localStorage.setItem("darkMode", "disabled");
+      }
+    });
+  }
+
+  // Evento de abrir/fechar Menu Dropdown do Usuário
+  const dropdownBtn = document.getElementById("dropdownBtn");
+  const areaDropdown = document.getElementById("areaUsuario");
+
+  if (dropdownBtn) {
+    dropdownBtn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      areaDropdown.classList.toggle("active");
+    });
+  }
+
+  document.addEventListener("click", function(e) {
+    if (areaDropdown && !areaDropdown.contains(e.target)) {
+      areaDropdown.classList.remove("active");
+    }
+  });
+});
+
+// 3. Funções de Interface
+function mostrarEspecialistas(dia) {
+  document.querySelectorAll('#segunda, #terca, #quarta, #quinta, #sexta')
+    .forEach(div => div.style.display = 'none');
+  const elementoDia = document.getElementById(dia);
+  if (elementoDia) {
+    elementoDia.style.display = 'grid';
+  }
+}
+
+function agendarConsulta(especialidade) {
+  const elemento = document.getElementById("especialidadeSelecionada");
+  elemento.innerText = "Especialidade: " + especialidade;
+  const diasPermitidos = disponibilidade[especialidade];
+  if (diasPermitidos) {
+    elemento.innerText += " | Dias disponíveis: " + diasPermitidos.join(", ");
+  }
+  document.getElementById("modalAgendamento").classList.add("show"); 
+}
+
+function fecharModal() {
+  document.getElementById("modalAgendamento").classList.remove("show"); 
+}
+
+function sairDaConta() {
+  localStorage.removeItem("usuarioNome");
+  localStorage.removeItem("usuarioLogado");
+  window.location.reload();
+}
+
+// 4. Confirmação e Validação do Agendamento
+function confirmarAgendamento() {
+  const nome = document.getElementById("nomePaciente").value;
+  const data = document.getElementById("dataConsulta").value;
+  const hora = document.getElementById("horaConsulta").value;
+  
+  const elEspecialidade = document.getElementById("especialidadeSelecionada");
+  const especialidade = elEspecialidade.innerText.split(" |")[0].replace("Especialidade: ", "").trim();
+
+  // Validação de campos vazios
+  if (!nome || !data || !hora) {
+    Swal.fire({ 
+      title: "Campos obrigatórios", 
+      text: "Preencha todos os dados antes de confirmar.", 
+      icon: "warning",
+      confirmButtonColor: "#739970"
+    });
+    return;
+  }
+
+  // Cria objeto de data preservando fuso horário local
+  const [ano, mes, dia] = data.split("-").map(Number);
+  const dataObj = new Date(ano, mes - 1, dia);
+
+  const diaSemana = dataObj.getDay();
+  const nomeDia = nomesDias[diaSemana];
+
+  // Bloqueio de finais de semana
+  if (diaSemana === 0 || diaSemana === 6) {
+    Swal.fire({ 
+      title: "Agendamento não permitido", 
+      text: "Consultas não podem ser marcadas em finais de semana.", 
+      icon: "error", 
+      confirmButtonColor: "#739970" 
+    });
+    return;
+  }
+
+  // Verifica se o especialista atende nesse dia da semana
+  const diasPermitidos = disponibilidade[especialidade];
+  if (!diasPermitidos || !diasPermitidos.includes(nomeDia)) {
+    Swal.fire({ 
+      title: "Agendamento não permitido", 
+      text: `O especialista em ${especialidade} não atende na ${nomeDia}.`, 
+      icon: "error", 
+      confirmButtonColor: "#739970" 
+    });
+    return;
+  }
+
+  // Validação do intervalo de horários (08h às 16h, de 30 em 30 min)
+  const [horaSelecionada, minutosSelecionados] = hora.split(":").map(Number);
+  if (horaSelecionada < 8 || horaSelecionada >= 16 || minutosSelecionados % 30 !== 0) {
+    Swal.fire({ 
+      title: "Horário inválido", 
+      text: "As consultas só podem ser agendadas entre 08h e 16h, em intervalos de 30 minutos.", 
+      icon: "error", 
+      confirmButtonColor: "#739970" 
+    });
+    return;
+  }
+
+  // Verificação de duplicidade/conflito no localStorage
+  let consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+  const dataExibicao = dataObj.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" });
+
+  const existe = consultas.some(c => c.especialidade === especialidade && c.data === dataExibicao && c.hora === hora);
+  if (existe) {
+    Swal.fire({ 
+      title: "Conflito de agendamento", 
+      text: "Já existe uma consulta agendada para essa especialidade neste mesmo dia e horário.", 
+      icon: "error", 
+      confirmButtonColor: "#739970" 
+    });
+    return;
+  }
+
+  // Grava o agendamento no localStorage
+  const consulta = { nome, data: dataExibicao, hora, especialidade };
+  consultas.push(consulta);
+  localStorage.setItem("consultas", JSON.stringify(consultas));
+
+  // Confirmação com SweetAlert2
+  Swal.fire({ 
+    title: "Consulta Confirmada!", 
+    text: `${nome}, sua consulta de ${especialidade} foi marcada para ${dataExibicao} às ${hora}.`, 
+    icon: "success", 
+    confirmButtonColor: "#739970" 
+  }).then(() => {
+    fecharModal();
+  });
+}
+</script>
+</body>
+</html>
+
+
+
