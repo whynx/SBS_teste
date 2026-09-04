@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro</title>
+  <style>
+    body {
+      font-family: Verdana, Arial, sans-serif;
+      background: linear-gradient(135deg, #ffffff, #ffffff); 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 450px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    h2 {
+      text-align: center;
+      color: #739970; 
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    input:focus, select:focus {
+      border-color: #739970;
+      box-shadow: 0 0 6px rgba(115,153,112,0.3);
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 25px;
+      background: #739970; 
+      color: #feffe0;       
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: #86b483; 
+      transform: scale(1.02);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.95rem;
+    }
+
+    .login-link a {
+      color: #e8c889;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Container de Cadastro -->
+  <div class="container" id="cadastroForm">
+    <h2>Cadastro Funcionário SBS</h2>
+    <form id="formCadastro">
+      <label for="nome">Nome Completo</label>
+      <input type="text" id="nome" name="nome" required>
+
+      <label for="idFun">Id Funcionário (5 dígitos)</label>
+      <input type="text" id="idFun" name="idFun" pattern="\d{5}" placeholder="Digite seu id" required>
+
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" name="senha" minlength="6" required>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <div class="login-link">
+      Caso ja tenha cadastro <a onclick="mostrarLogin()">Faça Login</a>
+    </div>
+  </div>
+
+  <!-- Container de Login -->
+  <div class="container" id="loginForm" style="display:none;">
+    <h2>Login Funcionário SBS</h2>
+    <form id="formLogin">
+      <label for="idFunLogin">Id Funcionário</label>
+      <input type="text" id="idFunLogin" name="idFunLogin" pattern="\d{5}" placeholder="Digite seu id" required>
+
+      <label for="senhaLogin">Senha</label>
+      <input type="password" id="senhaLogin" name="senhaLogin" required>
+    
+      <button type="submit">Entrar</button>
+    </form>
+
+    <div class="login-link">
+      Caso não tenha efetuado cadastro <a onclick="mostrarCadastro()">Cadastre-se</a>
+    </div>
+  </div>
+
+<script>
+// Evento de Cadastro
+document.getElementById("formCadastro").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const nome = document.getElementById("nome").value;
+  const idFun = document.getElementById("idFun").value;
+  const senha = document.getElementById("senha").value;
+
+  // 1. Busca os usuários já cadastrados no localStorage (ou cria uma lista vazia se não houver)
+  let usuarios = JSON.parse(localStorage.getItem("usuariosSBS")) || [];
+
+  // 2. Verifica se o ID já foi cadastrado por outra pessoa
+  const usuarioExiste = usuarios.some(u => u.idFun === idFun);
+  if (usuarioExiste) {
+    alert("Este ID de funcionário já está cadastrado!");
+    return;
+  }
+
+  // 3. Adiciona o novo usuário na lista
+  usuarios.push({
+    nome: nome,
+    idFun: idFun,
+    senha: senha
+  });
+
+  // 4. Salva a lista atualizada de volta no localStorage
+  localStorage.setItem("usuariosSBS", JSON.stringify(usuarios));
+
+  alert("Cadastro realizado com sucesso!");
+  window.location.href = "telainicioadm.html"; 
+});
+
+// Evento de Login
+document.getElementById("formLogin").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const idFun = document.getElementById("idFunLogin").value;
+  const senhaLogin = document.getElementById("senhaLogin").value;
+
+  // 1. Busca a lista de usuários salvos
+  const usuarios = JSON.parse(localStorage.getItem("usuariosSBS")) || [];
+
+  // 2. Procura um usuário na lista que coincida com o ID e a Senha informados
+  const usuarioEncontrado = usuarios.find(u => u.idFun === idFun && u.senha === senhaLogin);
+
+  if (usuarioEncontrado) {
+    // Opcional: salva quem está logado no momento para usar na página inicial
+    localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
+    mostrarInicio(); 
+  } else {
+    alert("ID ou senha incorretos!");
+  }
+});
+
+function mostrarLogin() {
+  document.getElementById("cadastroForm").style.display = "none";
+  document.getElementById("loginForm").style.display = "block";
+}
+
+function mostrarCadastro() {
+  document.getElementById("loginForm").style.display = "none";
+  document.getElementById("cadastroForm").style.display = "block";
+}
+
+function mostrarInicio() {
+  window.location.href = "telainicioadm.html"; 
+}
+</script>
+
+</body>
+</html>
