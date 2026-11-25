@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendamentos - SBS Funcionário</title>
+
+  <!-- SweetAlert2 & FontAwesome -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  :root {
+    --font-scale: 1;
+    --primary-color: #345c46;
+    --primary-hover: #35473d;
+    --accent-color: #e8c889;
+    --bg-light: #e8e8e0;
+    --card-light: #5e7468e6;
+    --text-light: #2d3748;
+    --border-color: #d1d5db;
+    --btn-height: 36px;
+    --action-btn-height: 42px;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    zoom: var(--font-scale);
+    font-family: Verdana, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-light);
+    transition: background 0.4s ease, color 0.4s ease;
+    line-height: 1.6;
+    animation: fadeIn 0.6s ease;
+    border-top: clamp(8px, 2.5vw, 20px) solid #3a4d4ee6;
+    border-radius: 16px;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* NAV BAR SEMPRE EM LINHA RETA SEM BARRA DE ROLAGEM */
+  nav {
+    background: #fffdf6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px clamp(8px, 2vw, 24px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: clamp(4px, 0.8vw, 8px);
+    width: 100%;
+  }
+
+  nav img {
+    width: clamp(72px, 10vw, 140px);
+    height: auto;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .nav-links,
+  nav .links {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1.5vw, 18px);
+    flex-wrap: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .badge-admin {
+    background: #e8f0eb;
+    color: #345c46;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: calc(0.75rem * var(--font-scale));
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  nav a {
+    color: #345c46;
+    padding: clamp(4px, 0.5vw, 6px) clamp(7px, 1vw, 12px);
+    text-decoration: none;
+    font-size: calc(clamp(0.7rem, 1vw, 0.9rem) * var(--font-scale));
+    border-radius: 10px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  nav a:hover {
+    background-color: rgb(243, 246, 243);
+    transform: translateY(-1px);
+  }
+
+  /* CAIXA DE PESQUISA AMPLIADA */
+  .search-container {
+    display: flex;
+    align-items: center;
+    border-radius: 22px;
+    padding: 6px clamp(10px, 1.2vw, 16px);
+    height: var(--action-btn-height);
+    border: 1px solid var(--border-color);
+    flex-shrink: 1;
+    min-width: 110px;
+    width: clamp(100px, 20vw, 210px);
+    max-width: 310px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .search-container input {
+    border: none;
+    outline: none;
+    padding: 2px 4px;
+    font-size: calc(clamp(0.82rem, 1.05vw, 0.98rem) * var(--font-scale));
+    background: transparent;
+    width: 100%;
+    min-width: 60px;
+    color: inherit;
+  }
+
+  .search-container i {
+    color: #5e7468;
+    margin-right: 7px;
+    font-size: clamp(0.85rem, 1.05vw, 1rem);
+    flex-shrink: 0;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: clamp(4px, 0.6vw, 8px);
+    flex-shrink: 0;
+  }
+
+  /* BOTÕES PADRONIZADOS E DESTAQUES */
+  .btn-cadastro {
+    height: var(--btn-height);
+    min-height: var(--btn-height);
+    padding: 0 clamp(8px, 1vw, 12px);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: calc(clamp(0.75rem, 0.95vw, 0.88rem) * var(--font-scale));
+    font-weight: 500;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    background: var(--primary-color);
+    color: #feffe0;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .btn-cadastro:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.03);
+  }
+
+  .btn-darkmode,
+  .dropdown-btn {
+    height: var(--action-btn-height);
+    min-height: var(--action-btn-height);
+    padding: 0 clamp(12px, 1.5vw, 18px);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: calc(clamp(0.84rem, 1.05vw, 0.98rem) * var(--font-scale));
+    font-weight: 600;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .btn-darkmode {
+    background: #444;
+    color: #fff;
+  }
+
+  .btn-darkmode:hover {
+    background: #666;
+    transform: scale(1.02);
+  }
+
+  /* DROPDOWN USUÁRIO COLADO NO BOTÃO */
+  .user-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .dropdown-btn {
+    background-color: #345c46;
+    color: #feffe0;
+  }
+
+  .dropdown-btn:hover {
+    background-color: #274434;
+    transform: scale(1.02);
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background-color: #ffffff;
+    min-width: 190px;
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.14);
+    border-radius: 8px;
+    z-index: 1000;
+    overflow: hidden;
+  }
+
+  .dropdown-content a {
+    color: #2d3748;
+    padding: 10px 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: calc(0.9rem * var(--font-scale));
+    border-radius: 0;
+    transition: background 0.2s ease;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #f3f4f6;
+  }
+
+  .user-dropdown.active .dropdown-content {
+    display: block;
+  }
+
+  /* CONTEÚDO PRINCIPAL */
+  main {
+    padding: clamp(20px, 3.5vw, 36px) clamp(12px, 3vw, 24px);
+    max-width: 1100px;
+    margin: auto;
+  }
+
+  main h1 {
+    color: #345c46;
+    text-align: center;
+    font-size: calc(clamp(1.35rem, 2.4vw, 1.85rem) * var(--font-scale));
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  /* CALENDÁRIO VISUAL DO FUNCIONÁRIO */
+  .calendar-section {
+    background: #fff;
+    padding: clamp(16px, 2.5vw, 22px);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    border: 1px solid #d1d5db;
+  }
+
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .calendar-header h3 {
+    color: #345c46;
+    font-size: calc(clamp(1.05rem, 1.5vw, 1.2rem) * var(--font-scale));
+  }
+
+  .calendar-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .calendar-input-group input[type="date"] {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: calc(0.95rem * var(--font-scale));
+    background: #f8fafc;
+    color: #2d3748;
+  }
+
+  .btn-reset-teste {
+    height: var(--btn-height);
+    min-height: var(--btn-height);
+    padding: 0 12px;
+    background: #5e7468;
+    color: #feffe0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: calc(0.84rem * var(--font-scale));
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s ease;
+  }
+
+  .btn-reset-teste:hover {
+    background: #345c46;
+  }
+
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .consulta, .vacina {
+    background: #5e7468;
+    padding: clamp(16px, 2.5vw, 20px);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    color: #feffe0;
+    line-height: 1.6;
+    transition: transform 0.2s ease;
+  }
+
+  .consulta:hover, .vacina:hover {
+    transform: translateY(-2px);
+  }
+
+  .consulta strong, .vacina strong {
+    font-size: calc(clamp(1.02rem, 1.4vw, 1.15rem) * var(--font-scale));
+    color: #e8c889;
+  }
+
+  .action-buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-confirmar,
+  .btn-cancelar {
+    height: var(--btn-height);
+    min-height: var(--btn-height);
+    padding: 0 14px;
+    font-size: calc(clamp(0.82rem, 1vw, 0.9rem) * var(--font-scale));
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+  }
+
+  .btn-confirmar {
+    background-color: #345c46;
+  }
+
+  .btn-confirmar:hover {
+    background-color: #244231;
+  }
+
+  .btn-cancelar {
+    background-color: #d33;
+  }
+
+  .btn-cancelar:hover {
+    background-color: #a00;
+  }
+
+  .status-badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 10px;
+    background: #345c46;
+    color: #feffe0;
+    border-radius: 4px;
+    font-size: calc(0.85rem * var(--font-scale));
+    font-weight: bold;
+  }
+
+  .status-badge.cancelado {
+    background: #d33;
+    color: #fff;
+  }
+
+  .empty-msg {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 15px;
+  }
+
+  /* MODO ESCURO */
+  body.dark-mode {
+    background: #3a4d4e;
+    color: #e8e8e0;
+  }
+
+  body.dark-mode nav {
+    background: #2c2c2c;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  body.dark-mode nav a {
+    color: #fff9e0;
+  }
+
+  body.dark-mode nav a:hover {
+    background-color: #3a4d4e;
+  }
+
+  body.dark-mode .badge-admin {
+    background: #3a4d4e;
+    color: #7bc49b;
+  }
+
+  body.dark-mode .calendar-section {
+    background: #2c2c2c;
+    border-color: #4a5c4e;
+  }
+
+  body.dark-mode .calendar-section h3 {
+    color: #7bc49b;
+  }
+
+  body.dark-mode .calendar-input-group input[type="date"] {
+    background: #1c2324;
+    border-color: #4a5c4e;
+    color: #fff9e0;
+  }
+
+  body.dark-mode .dropdown-btn {
+    background-color: #4a5c4e;
+    color: #fff9e0;
+  }
+
+  body.dark-mode .search-container {
+    background: #2c2c2c;
+    border: 1px solid #ece6cd;
+  }
+
+  body.dark-mode .search-container i,
+  body.dark-mode .search-container input {
+    color: #fff9e0;
+  }
+
+  body.dark-mode .dropdown-btn:hover {
+    background-color: #5e7468;
+  }
+
+  body.dark-mode .dropdown-content {
+    background-color: #2c2c2c;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  body.dark-mode .dropdown-content a {
+    color: #fff9e0;
+  }
+
+  body.dark-mode .dropdown-content a:hover {
+    background-color: #3a4d4e;
+  }
+
+  body.dark-mode main h1 {
+    color: #fff9e0;
+  }
+
+  body.dark-mode .empty-msg {
+    color: #ccc;
+  }
+
+  /* BOTÃO E MENU DE ACESSIBILIDADE */
+  #acessibilidade-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #2e5a44;
+    border: 3px solid #feffe0;
+    border-radius: 50%;
+    width: clamp(52px, 6vw, 60px);
+    height: clamp(52px, 6vw, 60px);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  #acessibilidade-btn:hover {
+    transform: scale(1.08);
+    background: #345c46;
+  }
+
+  #acessibilidade-btn i {
+    font-size: clamp(22px, 2.8vw, 26px);
+    color: #feffe0;
+  }
+
+  #menu-acessibilidade {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(360px, 100%);
+    height: 100%;
+    background: #ffffff;
+    color: #2d3748;
+    box-shadow: -8px 0 25px rgba(0,0,0,0.25);
+    padding: 25px;
+    transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1001;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  body.dark-mode #menu-acessibilidade {
+    background: #252525;
+    color: #f1f1f1;
+  }
+
+  #menu-acessibilidade.active {
+    right: 0;
+  }
+
+  .acessibilidade-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 12px;
+  }
+
+  body.dark-mode .acessibilidade-header {
+    border-bottom-color: #3d3d3d;
+  }
+
+  #menu-acessibilidade h3 {
+    color: #345c46;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  body.dark-mode #menu-acessibilidade h3 {
+    color: #7bc49b;
+  }
+
+  .btn-fechar-acessibilidade {
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #718096;
+    transition: color 0.2s;
+  }
+
+  .btn-fechar-acessibilidade:hover {
+    color: #e53e3e;
+  }
+
+  .acessibilidade-secao {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .acessibilidade-secao span {
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #718096;
+  }
+
+  .acessibilidade-grid-botoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  #menu-acessibilidade button.acc-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 8px;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #f7fafc;
+    color: #2d3748;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  body.dark-mode #menu-acessibilidade button.acc-action {
+    background: #323232;
+    border-color: #4a4a4a;
+    color: #e2e8f0;
+  }
+
+  #menu-acessibilidade button.acc-action i {
+    font-size: 1.2rem;
+    color: #345c46;
+  }
+
+  body.dark-mode #menu-acessibilidade button.acc-action i {
+    color: #7bc49b;
+  }
+
+  #menu-acessibilidade button.acc-action:hover {
+    background: #345c46;
+    color: white;
+    border-color: #345c46;
+  }
+
+  #menu-acessibilidade button.acc-action.ativo {
+    background: #2b4c39;
+    color: white;
+    border-color: #2b4c39;
+  }
+
+  #menu-acessibilidade .reset-full {
+    background: #fff5f5;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+    margin-top: 5px;
+  }
+
+  #menu-acessibilidade .reset-full:hover {
+    background: #fed7d7;
+  }
+
+  /* Estados de Acessibilidade no Body */
+  body.tema-invertido { filter: invert(100%) hue-rotate(180deg); }
+  body.tema-mono { filter: grayscale(100%); }
+  body.espaco-mais { letter-spacing: 1.8px !important; line-height: 1.9 !important; }
+  body.espaco-menos { letter-spacing: -0.4px !important; line-height: 1.25 !important; }
+
+  body.links-realçados a {
+    background: yellow !important;
+    color: black !important;
+    padding: 3px 6px;
+    border-radius: 4px;
+    outline: 2px solid black;
+    font-weight: bold;
+  }
+
+  body.sem-animacoes *, body.sem-animacoes *::before, body.sem-animacoes *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+</style>
+</head>
+<body>
+
+<nav aria-label="Navegação Principal">
+  <div class="nav-links">
+    <img src="imagens/logocolorida.png" alt="Logo da Clínica SBS" onerror="this.src='https://placehold.co/130x40/1f382d/feffe0?text=SBS+Admin'">
+    <span class="badge-admin">Painel Funcionário</span>
+  </div>
+
+  <div class="nav-links">
+    <a href="telainicioadm.html"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> Visão Geral</a>
+  </div>
+
+  <div class="search-container">
+    <i class="fas fa-search" aria-hidden="true"></i>
+    <input type="text" id="campoBuscaPaciente" placeholder="Buscar paciente..." aria-label="Pesquisar no sistema" oninput="carregarConsultas(); carregarVacinas();">
+  </div>
+
+  <div class="nav-actions">
+    <button class="btn-darkmode" id="toggleDarkMode" aria-label="Alternar modo escuro geral">
+      <i class="fas fa-moon" id="iconDarkMode" aria-hidden="true"></i>
+      <span id="textDarkMode">Modo Escuro</span>
+    </button>
+
+    <div class="user-dropdown" id="areaUsuario">
+      <button class="dropdown-btn" id="dropdownBtn">
+        <i class="fas fa-user-shield"></i>
+        <span id="nomeUsuarioTexto">Atendente</span>
+        <i class="fas fa-chevron-down" style="font-size: 0.75rem; margin-left: 4px;"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="#" onclick="sairDaConta(); return false;"><i class="fas fa-sign-out-alt"></i> Encerrar Sessão</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Botão de Acessibilidade Flutuante -->
+<button id="acessibilidade-btn" aria-label="Abrir menu de acessibilidade" aria-expanded="false" accesskey="a">
+  <i class="fas fa-universal-access" aria-hidden="true"></i>
+</button>
+
+<!-- Painel de Acessibilidade -->
+<aside id="menu-acessibilidade" aria-label="Menu de Acessibilidade">
+  <div class="acessibilidade-header">
+    <h3><i class="fas fa-universal-access"></i> Acessibilidade</h3>
+    <button class="btn-fechar-acessibilidade" id="btn-fechar-acc" aria-label="Fechar menu">&times;</button>
+  </div>
+
+  <div class="acessibilidade-secao">
+    <span>Contraste</span>
+    <div class="acessibilidade-grid-botoes">
+      <button id="btn-contraste-invertido" class="acc-action" accesskey="i">
+        <i class="fas fa-adjust"></i> Invertido (ALT+i)
+      </button>
+      <button id="btn-contraste-mono" class="acc-action" accesskey="m">
+        <i class="fas fa-eye-slash"></i> Monocromático (ALT+m)
+      </button>
+    </div>
+  </div>
+
+  <div class="acessibilidade-secao">
+    <span>Tamanho da Fonte</span>
+    <div class="acessibilidade-grid-botoes">
+      <button id="btn-aumenta-fonte" class="acc-action" accesskey="+">
+        <i class="fas fa-search-plus"></i> Aumentar (ALT++)
+      </button>
+      <button id="btn-diminui-fonte" class="acc-action" accesskey="-">
+        <i class="fas fa-search-minus"></i> Diminuir (ALT+-)
+      </button>
+    </div>
+  </div>
+
+  <div class="acessibilidade-secao">
+    <span>Espaçamento</span>
+    <div class="acessibilidade-grid-botoes">
+      <button id="btn-espaco-mais" class="acc-action" accesskey="3">
+        <i class="fas fa-text-width"></i> Expandir (ALT+3)
+      </button>
+      <button id="btn-espaco-menos" class="acc-action" accesskey="4">
+        <i class="fas fa-text-height"></i> Reduzir (ALT+4)
+      </button>
+    </div>
+  </div>
+
+  <div class="acessibilidade-secao">
+    <span>Navegação e Leitura</span>
+    <div class="acessibilidade-grid-botoes">
+      <button id="btn-leitor" class="acc-action" accesskey="l">
+        <i class="fas fa-volume-up"></i> Leitor (ALT+l)
+      </button>
+      <button id="btn-links" class="acc-action" accesskey="7">
+        <i class="fas fa-link"></i> Destacar Links (ALT+7)
+      </button>
+      <button id="btn-animacoes" class="acc-action" style="grid-column: span 2;" accesskey="6">
+        <i class="fas fa-bolt"></i> Pausar / Ligar Animações (ALT+6)
+      </button>
+    </div>
+  </div>
+
+  <button id="btn-reset" class="reset-full" accesskey="0">
+    <i class="fas fa-undo"></i> Restaurar Padrões (ALT+0)
+  </button>
+</aside>
+
+<main id="conteudo-principal">
+  <h1>Painel de Controle e Disponibilidade</h1>
+
+  <div class="calendar-section">
+    <div class="calendar-header">
+      <h3><i class="fas fa-calendar-alt"></i> Filtrar Disponibilidade por Data</h3>
+      <div class="calendar-input-group">
+        <input type="date" id="filtroData" onchange="carregarConsultas(); carregarVacinas();">
+        <button class="btn-confirmar" onclick="limparFiltroData()" style="padding: 8px 12px; font-size: 0.85rem;">Ver Todos</button>
+        <button class="btn-reset-teste" onclick="restaurarDadosTeste()" title="Recria consultas e vacinas de exemplo para teste">
+          <i class="fas fa-rotate-left"></i> Restaurar Dados 
+        </button>
+      </div>
+    </div>
+    <p style="font-size: 0.9rem; color: #666;" id="statusFiltro">Exibindo todos os agendamentos cadastrados no sistema.</p>
+  </div>
+
+  <h1>Histórico de Consultas Agendadas</h1>
+  <div id="listaConsultas" class="cards-container"></div>
+
+  <h1>Histórico de Vacinas Agendadas</h1>
+  <div id="listaVacinas" class="cards-container"></div>
+</main>
+
+<script>
+
+function dataFuturaBR(diasAfronte) {
+  const d = new Date();
+  d.setDate(d.getDate() + diasAfronte);
+  const dia = String(d.getDate()).padStart(2, '0');
+  const mes = String(d.getMonth() + 1).padStart(2, '0');
+  const ano = d.getFullYear();
+  return `${dia}/${mes}/${ano}`;
+}
+
+function criarConsultasExemplo() {
+  return [
+    {
+      nome: "Patrícia Albuquerque",
+      especialidade: "Clínico Geral",
+      data: "07/12/2026", // Segunda-feira
+      hora: "08:00",
+      status: "Pendente",
+      confirmada: false,
+      exemploTeste: true
+    },
+    {
+      nome: "Carlos Eduardo Mendes",
+      especialidade: "Cardiologia",
+      data: "07/12/2026", // Segunda-feira
+      hora: "08:30",
+      status: "Confirmada",
+      confirmada: true,
+      exemploTeste: true
+    },
+    {
+      nome: "Fernanda Souza Lima",
+      especialidade: "Oftalmologia",
+      data: "07/12/2026", // Segunda-feira
+      hora: "09:00",
+      status: "Pendente",
+      confirmada: false,
+      exemploTeste: true
+    },
+    {
+      nome: "João Pedro Oliveira",
+      especialidade: "Ortopedia",
+      data: "08/12/2026", // Terça-feira
+      hora: "10:00",
+      status: "Cancelada",
+      confirmada: false,
+      exemploTeste: true
+    },
+    {
+      nome: "Ricardo Almeida Costa",
+      especialidade: "Neurologia",
+      data: "08/12/2026", // Terça-feira
+      hora: "10:30",
+      status: "Confirmada",
+      confirmada: true,
+      exemploTeste: true
+    },
+    {
+      nome: "Antônio Carlos Ramos",
+      especialidade: "Pneumologia",
+      data: "08/12/2026", // Terça-feira
+      hora: "15:30",
+      status: "Pendente",
+      confirmada: false,
+      exemploTeste: true
+    },
+    {
+      nome: "Mariana Silva Santos",
+      especialidade: "Ginecologia",
+      data: "09/12/2026", // Quarta-feira
+      hora: "09:30",
+      status: "Pendente",
+      confirmada: false,
+      exemploTeste: true
+    },
+    {
+      nome: "Helena Costa Lima",
+      especialidade: "Dermatologia",
+      data: "09/12/2026", // Quarta-feira
+      hora: "11:00",
+      status: "Pendente",
+      confirmada: false,
+      exemploTeste: true
+    },
+    {
+      nome: "Gabriel Martins Rocha",
+      especialidade: "Pediatria",
+      data: "09/12/2026", // Quarta-feira
+      hora: "11:30",
+      status: "Confirmada",
+      confirmada: true,
+      exemploTeste: true
+    },
+    {
+      nome: "Aline Pereira Dias",
+      especialidade: "Endocrinologia",
+      data: "10/12/2026", // Quinta-feira
+      hora: "13:30",
+      status: "Pendente",
+      confirmada: false,
+      exemploTeste: true
+    },
+    {
+      nome: "Roberto Nascimento",
+      especialidade: "Gastroenterologia",
+      data: "10/12/2026", // Quinta-feira
+      hora: "14:00",
+      status: "Pendente",
+      confirmada: false,
+      exemploTeste: true
+    },
+    {
+      nome: "Camila Ferreira Gomes",
+      especialidade: "Psiquiatria",
+      data: "11/12/2026", // Sexta-feira
+      hora: "15:00",
+      status: "Confirmada",
+      confirmada: true,
+      exemploTeste: true
+    }
+  ];
+}
+
+function criarVacinasExemplo() {
+  return [
+    {
+      nome: "Patrícia Albuquerque",
+      categoria: "Idoso (60+)",
+      vacina: "Influenza (Gripe)",
+      data: "07/12/2026",
+      hora: "09:30",
+      status: "Pendente",
+      confirmada: false,
+      exemploTeste: true
+    },
+    {
+      nome: "Lucas Gabriel Rocha",
+      categoria: "Adulto",
+      vacina: "Hepatite B (3ª dose)",
+      data: "09/12/2026",
+      hora: "11:00",
+      status: "Confirmada",
+      confirmada: true,
+      exemploTeste: true
+    },
+    {
+      nome: "Beatriz Ferreira Alves",
+      categoria: "Infantil",
+      vacina: "Febre Amarela",
+      data: "11/12/2026",
+      hora: "15:00",
+      status: "Pendente",
+      confirmada: false,
+      exemploTeste: true
+    }
+  ];
+}
+function semearDadosTeste() {
+  if (localStorage.getItem("consultas") === null) {
+    localStorage.setItem("consultas", JSON.stringify(criarConsultasExemplo()));
+  }
+  if (localStorage.getItem("agendamentosVacinas") === null) {
+    localStorage.setItem("agendamentosVacinas", JSON.stringify(criarVacinasExemplo()));
+  }
+}
+
+function restaurarDadosTeste() {
+  Swal.fire({
+    title: "Restaurar Dados de Teste?",
+    text: "Isso recriará as consultas e vacinas de exemplo para testar a disponibilidade e o histórico.",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#345c46",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Sim, restaurar",
+    cancelButtonText: "Cancelar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.setItem("consultas", JSON.stringify(criarConsultasExemplo()));
+      localStorage.setItem("agendamentosVacinas", JSON.stringify(criarVacinasExemplo()));
+      limparFiltroData();
+      Swal.fire({
+        title: "Dados Restaurados!",
+        text: "As consultas e vacinas de teste estão disponíveis na tela.",
+        icon: "success",
+        confirmButtonColor: "#345c46"
+      });
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  // 1. Validação da Sessão do Funcionário
+  const adminLogado = JSON.parse(localStorage.getItem("adminLogado"));
+  if (!adminLogado) {
+    window.location.href = "cadastrofuncionario.html";
+    return;
+  }
+
+  const nomeUsuarioTexto = document.getElementById("nomeUsuarioTexto");
+  if (nomeUsuarioTexto && adminLogado.nome) {
+    nomeUsuarioTexto.textContent = adminLogado.nome.split(" ")[0];
+  }
+
+
+  semearDadosTeste();
+
+  // 2. Modo Escuro Geral
+  const isDarkMode = localStorage.getItem("darkMode") === "enabled";
+  const btnDark = document.getElementById("toggleDarkMode");
+  const iconDark = document.getElementById("iconDarkMode");
+  const textDark = document.getElementById("textDarkMode");
+
+  function atualizarBotaoDarkMode(ativado) {
+    if (ativado) {
+      if (iconDark) iconDark.className = "fas fa-sun";
+      if (textDark) textDark.textContent = "Modo Claro";
+    } else {
+      if (iconDark) iconDark.className = "fas fa-moon";
+      if (textDark) textDark.textContent = "Modo Escuro";
+    }
+  }
+
+  if (isDarkMode) {
+    document.body.classList.add("dark-mode");
+    atualizarBotaoDarkMode(true);
+  } else {
+    atualizarBotaoDarkMode(false);
+  }
+
+  if (btnDark) {
+    btnDark.addEventListener("click", function() {
+      document.body.classList.toggle("dark-mode");
+      const ativado = document.body.classList.contains("dark-mode");
+
+      if (ativado) {
+        localStorage.setItem("darkMode", "enabled");
+        atualizarBotaoDarkMode(true);
+      } else {
+        localStorage.setItem("darkMode", "disabled");
+        atualizarBotaoDarkMode(false);
+      }
+    });
+  }
+
+  // 3. Dropdown Menu do Usuário
+  const dropdownBtn = document.getElementById("dropdownBtn");
+  const areaUsuario = document.getElementById("areaUsuario");
+
+  if (dropdownBtn) {
+    dropdownBtn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      areaUsuario.classList.toggle("active");
+    });
+  }
+
+  document.addEventListener("click", function(e) {
+    if (areaUsuario && !areaUsuario.contains(e.target)) {
+      areaUsuario.classList.remove("active");
+    }
+  });
+
+  // Carrega os dados iniciais
+  carregarConsultas();
+  carregarVacinas();
+
+  // 4. SCRIPTS DO MENU DE ACESSIBILIDADE
+  const btnMenu = document.getElementById("acessibilidade-btn");
+  const btnFecharAcc = document.getElementById("btn-fechar-acc");
+  const menu = document.getElementById("menu-acessibilidade");
+
+  if (btnMenu) {
+    btnMenu.addEventListener("click", () => {
+      const isActive = menu.classList.toggle("active");
+      btnMenu.setAttribute("aria-expanded", isActive);
+    });
+  }
+
+  if (btnFecharAcc) {
+    btnFecharAcc.addEventListener("click", () => {
+      menu.classList.remove("active");
+      if (btnMenu) btnMenu.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  let currentScale = parseFloat(localStorage.getItem("fontScale")) || 1;
+  if (currentScale !== 1) {
+    document.documentElement.style.setProperty('--font-scale', currentScale);
+  }
+
+  const btnAf = document.getElementById("btn-aumenta-fonte");
+  if (btnAf) {
+    btnAf.onclick = () => {
+      if (currentScale < 1.5) {
+        currentScale = Math.round((currentScale + 0.1) * 10) / 10;
+        document.documentElement.style.setProperty('--font-scale', currentScale);
+        localStorage.setItem("fontScale", currentScale);
+      }
+    };
+  }
+
+  const btnDf = document.getElementById("btn-diminui-fonte");
+  if (btnDf) {
+    btnDf.onclick = () => {
+      if (currentScale > 0.8) {
+        currentScale = Math.round((currentScale - 0.1) * 10) / 10;
+        document.documentElement.style.setProperty('--font-scale', currentScale);
+        localStorage.setItem("fontScale", currentScale);
+      }
+    };
+  }
+
+  const contrastModes = ["tema-invertido", "tema-mono"];
+  function setMode(mode) {
+    contrastModes.forEach(m => document.body.classList.remove(m));
+    if (!document.body.classList.contains(mode)) {
+      document.body.classList.add(mode);
+    }
+    salvarClassesAcessibilidade();
+  }
+
+  const btnCI = document.getElementById("btn-contraste-invertido");
+  if (btnCI) btnCI.onclick = () => setMode("tema-invertido");
+
+  const btnCM = document.getElementById("btn-contraste-mono");
+  if (btnCM) btnCM.onclick = () => setMode("tema-mono");
+
+  const btnEm = document.getElementById("btn-espaco-mais");
+  if (btnEm) {
+    btnEm.onclick = () => {
+      document.body.classList.remove("espaco-menos");
+      document.body.classList.toggle("espaco-mais");
+      salvarClassesAcessibilidade();
+    };
+  }
+
+  const btnEmen = document.getElementById("btn-espaco-menos");
+  if (btnEmen) {
+    btnEmen.onclick = () => {
+      document.body.classList.remove("espaco-mais");
+      document.body.classList.toggle("espaco-menos");
+      salvarClassesAcessibilidade();
+    };
+  }
+
+  const leitorBtn = document.getElementById("btn-leitor");
+  let leitorAtivo = false;
+  if (leitorBtn) {
+    leitorBtn.onclick = () => {
+      const mainContent = document.getElementById("conteudo-principal");
+      if (!leitorAtivo) {
+        if ('speechSynthesis' in window && mainContent) {
+          const utterance = new SpeechSynthesisUtterance(mainContent.innerText);
+          utterance.lang = 'pt-BR';
+          speechSynthesis.speak(utterance);
+          leitorBtn.classList.add("ativo");
+          leitorAtivo = true;
+        } else {
+          alert("Seu navegador não suporta leitura de tela nativa.");
+        }
+      } else {
+        speechSynthesis.cancel();
+        leitorBtn.classList.remove("ativo");
+        leitorAtivo = false;
+      }
+    };
+  }
+
+  const animBtn = document.getElementById("btn-animacoes");
+  if (animBtn) {
+    animBtn.onclick = () => {
+      document.body.classList.toggle("sem-animacoes");
+      salvarClassesAcessibilidade();
+    };
+  }
+
+  const linksBtn = document.getElementById("btn-links");
+  if (linksBtn) {
+    linksBtn.onclick = () => {
+      document.body.classList.toggle("links-realçados");
+      salvarClassesAcessibilidade();
+    };
+  }
+
+  const btnReset = document.getElementById("btn-reset");
+  if (btnReset) {
+    btnReset.onclick = () => {
+      contrastModes.forEach(m => document.body.classList.remove(m));
+      document.body.classList.remove("espaco-mais", "espaco-menos", "links-realçados", "sem-animacoes");
+      currentScale = 1;
+      document.documentElement.style.setProperty('--font-scale', 1);
+      localStorage.removeItem("fontScale");
+      localStorage.removeItem("accessibilityClasses");
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
+      leitorAtivo = false;
+      atualizarEstadosBotoesAcc();
+      if (menu) menu.classList.remove("active");
+      if (btnMenu) btnMenu.setAttribute("aria-expanded", "false");
+    };
+  }
+
+  const savedClasses = JSON.parse(localStorage.getItem("accessibilityClasses"));
+  if (Array.isArray(savedClasses)) {
+    savedClasses.forEach(cls => document.body.classList.add(cls));
+  }
+  atualizarEstadosBotoesAcc();
+});
+
+function salvarClassesAcessibilidade() {
+  const classesParaSalvar = [];
+  ["tema-invertido", "tema-mono", "espaco-mais", "espaco-menos", "links-realçados", "sem-animacoes"].forEach(cls => {
+    if (document.body.classList.contains(cls)) classesParaSalvar.push(cls);
+  });
+  localStorage.setItem("accessibilityClasses", JSON.stringify(classesParaSalvar));
+  if (typeof atualizarEstadosBotoesAcc === "function") atualizarEstadosBotoesAcc();
+}
+
+function atualizarEstadosBotoesAcc() {
+  const btnInv = document.getElementById("btn-contraste-invertido");
+  const btnMono = document.getElementById("btn-contraste-mono");
+  const btnEspMais = document.getElementById("btn-espaco-mais");
+  const btnEspMenos = document.getElementById("btn-espaco-menos");
+  const btnLinks = document.getElementById("btn-links");
+  const btnAnim = document.getElementById("btn-animacoes");
+
+  if (btnInv) btnInv.classList.toggle("ativo", document.body.classList.contains("tema-invertido"));
+  if (btnMono) btnMono.classList.toggle("ativo", document.body.classList.contains("tema-mono"));
+  if (btnEspMais) btnEspMais.classList.toggle("ativo", document.body.classList.contains("espaco-mais"));
+  if (btnEspMenos) btnEspMenos.classList.toggle("ativo", document.body.classList.contains("espaco-menos"));
+  if (btnLinks) btnLinks.classList.toggle("ativo", document.body.classList.contains("links-realçados"));
+  if (btnAnim) btnAnim.classList.toggle("ativo", document.body.classList.contains("sem-animacoes"));
+}
+
+function sairDaConta() {
+  localStorage.removeItem("adminLogado");
+  window.location.href = "servidor.html";
+}
+
+function limparFiltroData() {
+  const inputFiltro = document.getElementById("filtroData");
+  if (inputFiltro) inputFiltro.value = "";
+  carregarConsultas();
+  carregarVacinas();
+}
+
+function validarFiltroData(dataAgendamentoStr) {
+  const filtroDataInput = document.getElementById("filtroData");
+  const statusFiltro = document.getElementById("statusFiltro");
+
+  if (!filtroDataInput || !filtroDataInput.value) {
+    if (statusFiltro) statusFiltro.textContent = "Exibindo todos os agendamentos cadastrados no sistema.";
+    return true;
+  }
+
+  const dataFiltroISO = filtroDataInput.value;
+  const [anoF, mesF, diaF] = dataFiltroISO.split('-');
+  const dataFiltroBR = `${diaF}/${mesF}/${anoF}`;
+
+  if (statusFiltro) {
+    statusFiltro.innerHTML = `Filtrando agendamentos para a data: <strong>${dataFiltroBR}</strong>`;
+  }
+
+  return dataAgendamentoStr === dataFiltroBR || dataAgendamentoStr === dataFiltroISO;
+}
+
+function validarFiltroBusca(item) {
+  const campoBusca = document.getElementById("campoBuscaPaciente");
+  const termo = campoBusca ? campoBusca.value.trim().toLowerCase() : "";
+  if (!termo) return true;
+
+  const textoAlvo = [
+    item.nome || "",
+    item.especialidade || "",
+    item.vacina || "",
+    item.categoria || "",
+    item.status || ""
+  ].join(" ").toLowerCase();
+
+  return textoAlvo.includes(termo);
+}
+
+function carregarConsultas() {
+  const lista = document.getElementById("listaConsultas");
+  const consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+
+  const consultasFiltradas = consultas.filter(c => validarFiltroData(c.data) && validarFiltroBusca(c));
+
+  if (consultasFiltradas.length === 0) {
+    lista.innerHTML = "<p class='empty-msg'>Nenhuma consulta encontrada para o filtro selecionado.</p>";
+    return;
+  }
+
+  lista.innerHTML = "";
+  consultasFiltradas.forEach((c) => {
+    const index = consultas.indexOf(c);
+    const isCancelada = c.status === "Cancelada";
+    const div = document.createElement("div");
+    div.className = "consulta";
+
+    let statusHTML = "";
+    if (isCancelada) {
+      statusHTML = '<span class="status-badge cancelado"><i class="fas fa-times"></i> Cancelada</span>';
+    } else if (c.confirmada) {
+      statusHTML = '<span class="status-badge"><i class="fas fa-check"></i> Confirmada</span>';
+    } else {
+      statusHTML = '<span class="status-badge" style="background:#e8c889; color:#333;"><i class="fas fa-clock"></i> Pendente</span>';
+    }
+
+    div.innerHTML = `
+      <strong>${c.nome || "Paciente"}</strong><br>
+      Especialidade: ${c.especialidade || "Geral"}<br>
+      Data: ${c.data || "N/A"} ${c.hora ? 'às ' + c.hora : ''}<br>
+      ${statusHTML}
+      ${!isCancelada ? `
+        <div class="action-buttons">
+          ${!c.confirmada ? `<button class="btn-confirmar" onclick="confirmarConsulta(${index})">Confirmar</button>` : ""}
+          <button class="btn-cancelar" onclick="cancelarConsulta(${index})">Cancelar</button>
+        </div>
+      ` : ''}
+    `;
+    lista.appendChild(div);
+  });
+}
+
+function confirmarConsulta(index) {
+  let consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+  consultas[index].confirmada = true;
+  consultas[index].status = "Confirmada";
+  localStorage.setItem("consultas", JSON.stringify(consultas));
+  carregarConsultas();
+
+  Swal.fire({
+    title: "Confirmada!",
+    text: "A consulta foi marcada como confirmada.",
+    icon: "success",
+    confirmButtonColor: "#345c46"
+  });
+}
+
+function cancelarConsulta(index) {
+  Swal.fire({
+    title: "Cancelar Consulta?",
+    text: "Ela permanecerá no histórico marcada como Cancelada.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#345c46",
+    confirmButtonText: "Sim, cancelar",
+    cancelButtonText: "Manter"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+      consultas[index].status = "Cancelada";
+      consultas[index].confirmada = false;
+      localStorage.setItem("consultas", JSON.stringify(consultas));
+      carregarConsultas();
+
+      Swal.fire({
+        title: "Cancelada!",
+        text: "A consulta foi registrada como cancelada no histórico.",
+        icon: "success",
+        confirmButtonColor: "#345c46"
+      });
+    }
+  });
+}
+
+function carregarVacinas() {
+  const lista = document.getElementById("listaVacinas");
+  const vacinas = JSON.parse(localStorage.getItem("agendamentosVacinas")) || [];
+
+  const vacinasFiltradas = vacinas.filter(v => validarFiltroData(v.data) && validarFiltroBusca(v));
+
+  if (vacinasFiltradas.length === 0) {
+    lista.innerHTML = "<p class='empty-msg'>Nenhum agendamento de vacina encontrado para o filtro selecionado.</p>";
+    return;
+  }
+
+  lista.innerHTML = "";
+  vacinasFiltradas.forEach((v) => {
+    const index = vacinas.indexOf(v);
+    const isCancelada = v.status === "Cancelada";
+    const div = document.createElement("div");
+    div.className = "vacina";
+
+    let statusHTML = "";
+    if (isCancelada) {
+      statusHTML = '<span class="status-badge cancelado"><i class="fas fa-times"></i> Cancelada</span>';
+    } else if (v.confirmada) {
+      statusHTML = '<span class="status-badge"><i class="fas fa-check"></i> Confirmada</span>';
+    } else {
+      statusHTML = '<span class="status-badge" style="background:#e8c889; color:#333;"><i class="fas fa-clock"></i> Pendente</span>';
+    }
+
+    div.innerHTML = `
+      <strong>${v.nome || "Paciente"}</strong> (${v.categoria || "Geral"})<br>
+      Vacina: ${v.vacina || "Não informada"}<br>
+      Data: ${v.data || "N/A"}${v.hora ? ` às ${v.hora}` : ""}<br>
+      ${statusHTML}
+      ${!isCancelada ? `
+        <div class="action-buttons">
+          ${!v.confirmada ? `<button class="btn-confirmar" onclick="confirmarVacina(${index})">Confirmar</button>` : ""}
+          <button class="btn-cancelar" onclick="cancelarVacina(${index})">Cancelar</button>
+        </div>
+      ` : ''}
+    `;
+    lista.appendChild(div);
+  });
+}
+
+function confirmarVacina(index) {
+  let vacinas = JSON.parse(localStorage.getItem("agendamentosVacinas")) || [];
+  vacinas[index].confirmada = true;
+  vacinas[index].status = "Confirmada";
+  localStorage.setItem("agendamentosVacinas", JSON.stringify(vacinas));
+  carregarVacinas();
+
+  Swal.fire({
+    title: "Confirmada!",
+    text: "O agendamento da vacina foi confirmado.",
+    icon: "success",
+    confirmButtonColor: "#345c46"
+  });
+}
+
+function cancelarVacina(index) {
+  Swal.fire({
+    title: "Cancelar Agendamento?",
+    text: "Ele permanecerá no histórico marcado como Cancelado.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#345c46",
+    confirmButtonText: "Sim, cancelar",
+    cancelButtonText: "Manter"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let vacinas = JSON.parse(localStorage.getItem("agendamentosVacinas")) || [];
+      vacinas[index].status = "Cancelada";
+      vacinas[index].confirmada = false;
+      localStorage.setItem("agendamentosVacinas", JSON.stringify(vacinas));
+      carregarVacinas();
+
+      Swal.fire({
+        title: "Cancelado!",
+        text: "O agendamento da vacina foi registrado como cancelado no histórico.",
+        icon: "success",
+        confirmButtonColor: "#345c46"
+      });
+    }
+  });
+}
+function ordenarPorNomeAlfabetico(a, b) {
+  const nomeA = String(a?.nome || "").trim();
+  const nomeB = String(b?.nome || "").trim();
+  return nomeA.localeCompare(nomeB, "pt-BR", { sensitivity: "base" });
+}
+
+function carregarConsultas() {
+  const lista = document.getElementById("listaConsultas");
+  const consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+
+  const consultasFiltradas = consultas
+    .map((c, index) => ({ ...c, indexOriginal: index }))
+    .filter(c => validarFiltroData(c.data) && validarFiltroBusca(c))
+    .sort(ordenarPorNomeAlfabetico);
+
+  if (consultasFiltradas.length === 0) {
+    lista.innerHTML = "<p class='empty-msg'>Nenhuma consulta encontrada para o filtro selecionado.</p>";
+    return;
+  }
+
+  lista.innerHTML = "";
+  consultasFiltradas.forEach((c) => {
+    const index = c.indexOriginal;
+    const isCancelada = c.status === "Cancelada";
+    const div = document.createElement("div");
+    div.className = "consulta";
+
+    let statusHTML = "";
+    if (isCancelada) {
+      statusHTML = '<span class="status-badge cancelado"><i class="fas fa-times"></i> Cancelada</span>';
+    } else if (c.confirmada) {
+      statusHTML = '<span class="status-badge"><i class="fas fa-check"></i> Confirmada</span>';
+    } else {
+      statusHTML = '<span class="status-badge" style="background:#e8c889; color:#333;"><i class="fas fa-clock"></i> Pendente</span>';
+    }
+
+    div.innerHTML = `
+      <strong>${c.nome || "Paciente"}</strong><br>
+      Especialidade: ${c.especialidade || "Geral"}<br>
+      Data: ${c.data || "N/A"} ${c.hora ? 'às ' + c.hora : ''}<br>
+      ${statusHTML}
+      ${!isCancelada ? `
+        <div class="action-buttons">
+          ${!c.confirmada ? `<button class="btn-confirmar" onclick="confirmarConsulta(${index})">Confirmar</button>` : ""}
+          <button class="btn-cancelar" onclick="cancelarConsulta(${index})">Cancelar</button>
+        </div>
+      ` : ''}
+    `;
+    lista.appendChild(div);
+  });
+}
+
+function carregarVacinas() {
+  const lista = document.getElementById("listaVacinas");
+  const vacinas = JSON.parse(localStorage.getItem("agendamentosVacinas")) || [];
+
+  const vacinasFiltradas = vacinas
+    .map((v, index) => ({ ...v, indexOriginal: index }))
+    .filter(v => validarFiltroData(v.data) && validarFiltroBusca(v))
+    .sort(ordenarPorNomeAlfabetico);
+
+  if (vacinasFiltradas.length === 0) {
+    lista.innerHTML = "<p class='empty-msg'>Nenhum agendamento de vacina encontrado para o filtro selecionado.</p>";
+    return;
+  }
+
+  lista.innerHTML = "";
+  vacinasFiltradas.forEach((v) => {
+    const index = v.indexOriginal;
+    const isCancelada = v.status === "Cancelada";
+    const div = document.createElement("div");
+    div.className = "vacina";
+
+    let statusHTML = "";
+    if (isCancelada) {
+      statusHTML = '<span class="status-badge cancelado"><i class="fas fa-times"></i> Cancelada</span>';
+    } else if (v.confirmada) {
+      statusHTML = '<span class="status-badge"><i class="fas fa-check"></i> Confirmada</span>';
+    } else {
+      statusHTML = '<span class="status-badge" style="background:#e8c889; color:#333;"><i class="fas fa-clock"></i> Pendente</span>';
+    }
+
+    div.innerHTML = `
+      <strong>${v.nome || "Paciente"}</strong> (${v.categoria || "Geral"})<br>
+      Vacina: ${v.vacina || "Não informada"}<br>
+      Data: ${v.data || "N/A"}${v.hora ? ` às ${v.hora}` : ""}<br>
+      ${statusHTML}
+      ${!isCancelada ? `
+        <div class="action-buttons">
+          ${!v.confirmada ? `<button class="btn-confirmar" onclick="confirmarVacina(${index})">Confirmar</button>` : ""}
+          <button class="btn-cancelar" onclick="cancelarVacina(${index})">Cancelar</button>
+        </div>
+      ` : ''}
+    `;
+    lista.appendChild(div);
+  });
+}
+</script>
+
+</body>
+</html>

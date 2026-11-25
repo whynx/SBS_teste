@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro - Funcionário SBS</title>
+  
+  <!-- Biblioteca SweetAlert2 para os alertas estilizados -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Verdana, Arial, sans-serif;
+      background: #e8e8e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      color: #345c46; 
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: #fcfcfc;
+    }
+
+    input:focus {
+      border-color: #345c46;
+      box-shadow: 0 0 6px rgba(52, 92, 70, 0.3);
+      outline: none;
+      background-color: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 25px;
+      background: #345c46; 
+      color: #feffe0;      
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: #35473d; 
+      transform: scale(1.02);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #4a5568;
+    }
+
+    .login-link a {
+      color: #345c46;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="cadastroForm">
+    <h2>Cadastro Funcionário SBS</h2>
+    <form id="formCadastro">
+      <label for="nome">Nome Completo</label>
+      <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
+
+      <label for="idFun">ID Funcionário (5 dígitos)</label>
+      <input type="text" id="idFun" name="idFun" pattern="\d{5}" maxlength="5" placeholder="Ex: 12345" required>
+
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" name="senha" minlength="6" placeholder="Mínimo 6 caracteres" required>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <div class="login-link">
+      Caso já tenha cadastro, <a onclick="mostrarLogin()">Faça Login</a>
+    </div>
+  </div>
+
+  <!-- Container de Login -->
+  <div class="container" id="loginForm" style="display:none;">
+    <h2>Login Funcionário SBS</h2>
+    <form id="formLogin">
+      <label for="idFunLogin">ID Funcionário</label>
+      <input type="text" id="idFunLogin" name="idFunLogin" pattern="\d{5}" maxlength="5" placeholder="Digite seus 5 dígitos" required>
+
+      <label for="senhaLogin">Senha</label>
+      <input type="password" id="senhaLogin" name="senhaLogin" placeholder="Digite sua senha" required>
+    
+      <button type="submit">Entrar</button>
+    </form>
+
+    <div class="login-link">
+      Caso não tenha efetuado cadastro, <a onclick="mostrarCadastro()">Cadastre-se</a>
+    </div>
+  </div>
+
+<script>
+// Restringe a entrada dos campos de ID apenas a números
+function aplicarApenasNumeros(input) {
+  input.addEventListener("input", function(e) {
+    e.target.value = e.target.value.replace(/\D/g, "");
+  });
+}
+
+const inputIdCad = document.getElementById("idFun");
+const inputIdLog = document.getElementById("idFunLogin");
+if (inputIdCad) aplicarApenasNumeros(inputIdCad);
+if (inputIdLog) aplicarApenasNumeros(inputIdLog);
+
+// Alternar telas
+function mostrarLogin() {
+  document.getElementById("cadastroForm").style.display = "none";
+  document.getElementById("loginForm").style.display = "block";
+}
+
+function mostrarCadastro() {
+  document.getElementById("loginForm").style.display = "none";
+  document.getElementById("cadastroForm").style.display = "block";
+}
+
+function mostrarInicio() {
+  window.location.href = "telainicioadm.html"; 
+}
+
+// Cadastro
+document.getElementById("formCadastro").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const nome = document.getElementById("nome").value;
+  const idFun = document.getElementById("idFun").value;
+  const senha = document.getElementById("senha").value;
+
+  let funcionarios = JSON.parse(localStorage.getItem("funcionariosSBS")) || [];
+
+  const usuarioExiste = funcionarios.some(u => u.idFun === idFun);
+  if (usuarioExiste) {
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        title: "Atenção!",
+        text: "Este ID de funcionário já está cadastrado!",
+        icon: "warning",
+        confirmButtonColor: "#345c46"
+      });
+    } else {
+      alert("Este ID de funcionário já está cadastrado!");
+    }
+    return;
+  }
+
+  const novoFuncionario = {
+    nome: nome,
+    idFun: idFun,
+    senha: senha,
+    perfil: "admin"
+  };
+
+  funcionarios.push(novoFuncionario);
+  localStorage.setItem("funcionariosSBS", JSON.stringify(funcionarios));
+
+  if (typeof Swal !== "undefined") {
+    Swal.fire({
+      title: "Sucesso!",
+      text: "Funcionário cadastrado com sucesso!",
+      icon: "success",
+      confirmButtonColor: "#345c46"
+    }).then(() => {
+      mostrarLogin();
+    });
+  } else {
+    alert("Funcionário cadastrado com sucesso!");
+    mostrarLogin();
+  }
+});
+
+// Login
+document.getElementById("formLogin").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const idFun = document.getElementById("idFunLogin").value;
+  const senhaLogin = document.getElementById("senhaLogin").value;
+
+  const funcionarios = JSON.parse(localStorage.getItem("funcionariosSBS")) || [];
+
+  const usuarioEncontrado = funcionarios.find(u => u.idFun === idFun && u.senha === senhaLogin);
+
+  if (usuarioEncontrado) {
+    localStorage.setItem("adminLogado", JSON.stringify(usuarioEncontrado));
+    localStorage.setItem("usuarioNome", usuarioEncontrado.nome);
+    mostrarInicio(); 
+  } else {
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        title: "Acesso Negado",
+        text: "ID ou senha incorretos!",
+        icon: "error",
+        confirmButtonColor: "#345c46"
+      });
+    } else {
+      alert("ID ou senha incorretos!");
+    }
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendamento - Tela Inicial</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --font-scale: 1;
+    --primary-color: #345c46;
+    --primary-hover: #35473d;
+    --accent-color: #e8c889;
+    --bg-light: #e8e8e0;
+    --card-light: #5e7468e6;
+    --text-light: #2d3748;
+    --border-color: #d1d5db;
+    --btn-height: 36px;
+    --action-btn-height: 42px;
+  }
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    zoom: var(--font-scale);
+    font-family: Verdana, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-light);
+    transition: background 0.4s ease, color 0.4s ease;
+    line-height: 1.6;
+    animation: fadeIn 0.6s ease;
+    border-top: clamp(8px, 2.5vw, 20px) solid #3a4d4ee6;
+    border-radius: 16px;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Modo Escuro */
+  body.dark-mode {
+    background: #3a4d4e;
+    color: #e8e8e0;
+  }
+
+  body.dark-mode nav {
+    background: #2c2c2c;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  body.dark-mode nav a {
+    color: #fff9e0;
+  }
+
+  body.dark-mode nav a:hover {
+    background-color: #3a4d4ee6;
+    transform: translateY(-2px);
+  }
+
+  body.dark-mode .search-container {
+    background: #2c2c2c;
+    border: 1px solid #ece6cd;
+  }
+
+  body.dark-mode .search-container i,
+  body.dark-mode .search-container input {
+    color: #fff9e0;
+  }
+
+  body.dark-mode .btn-cadastro,
+  body.dark-mode .dropdown-btn {
+    background-color: #4a5c4e;
+    color: #fff9e0;
+  }
+
+  body.dark-mode .btn-cadastro:hover,
+  body.dark-mode .dropdown-btn:hover {
+    background-color: #5e7468;
+  }
+
+  body.dark-mode .btn-darkmode {
+    background: #3a4d4e;
+    color: #fff9e0;
+  }
+
+  body.dark-mode .btn-darkmode:hover {
+    background: #5e7468;
+  }
+
+  body.dark-mode .secao-agendamento {
+    background: #2c2c2c;
+    border-color: #4a5c4e;
+  }
+
+  body.dark-mode .secao-agendamento h1 {
+    color: #7bc49b;
+    border-bottom-color: #3d3d3d;
+  }
+
+  body.dark-mode .consulta,
+  body.dark-mode .vacina {
+    background: #3a4d4e;
+    color: #fff9e0;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  }
+
+  body.dark-mode .vazio-msg {
+    color: #cbd5e0;
+  }
+
+  body.dark-mode footer {
+    background-color: #2e3b31;
+    color: #e8c889;
+    border-top: 20px solid #4a5c4e;
+  }
+
+  /* Botões Gerais e Destaques (Perfil e Modo Escuro) */
+  .btn-cadastro {
+    height: var(--btn-height);
+    min-height: var(--btn-height);
+    padding: 0 clamp(8px, 1vw, 12px);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: calc(clamp(0.75rem, 0.95vw, 0.88rem) * var(--font-scale));
+    font-weight: 500;
+    line-height: 1;
+    transition: background 0.3s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    background: var(--primary-color);
+    color: #feffe0;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .btn-cadastro:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.03);
+  }
+
+  .btn-darkmode,
+  .dropdown-btn {
+    height: var(--action-btn-height);
+    min-height: var(--action-btn-height);
+    padding: 0 clamp(12px, 1.5vw, 18px);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: calc(clamp(0.84rem, 1.05vw, 0.98rem) * var(--font-scale));
+    font-weight: 600;
+    line-height: 1;
+    transition: background 0.3s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+
+  .btn-darkmode {
+    background: #444;
+    color: #fff;
+  }
+
+  .btn-darkmode:hover {
+    background: #666;
+    transform: scale(1.02);
+  }
+
+  /* Navegação Sempre em Linha Reta sem Barra de Rolagem */
+  nav {
+    background: #fffdf6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px clamp(8px, 2vw, 24px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: clamp(4px, 0.8vw, 8px);
+    width: 100%;
+    position: relative;
+    z-index: 500;
+  }
+
+  nav img {
+    width: clamp(72px, 10vw, 140px);
+    height: auto;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  nav .links {
+    display: flex;
+    gap: clamp(8px, 1.5vw, 18px);
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  nav .acoes-nav {
+    display: flex;
+    gap: clamp(4px, 0.6vw, 8px);
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+
+  nav a {
+    color: var(--primary-color);
+    padding: clamp(4px, 0.5vw, 6px) clamp(7px, 1vw, 12px);
+    text-decoration: none;
+    font-size: calc(clamp(0.7rem, 1vw, 0.9rem) * var(--font-scale));
+    border-radius: 10px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  nav a:hover {
+    background-color: rgb(243, 246, 243);
+    transform: translateY(-2px);
+  }
+
+  /* Caixa de Pesquisa Ampliada */
+  .search-container {
+    display: flex;
+    align-items: center;
+    border-radius: 22px;
+    padding: 6px clamp(10px, 1.2vw, 16px);
+    height: var(--action-btn-height);
+    border: 1px solid var(--border-color);
+    flex-shrink: 1;
+    min-width: 110px;
+    width: clamp(100px, 20vw, 210px);
+    max-width: 310px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .search-container input {
+    border: none;
+    outline: none;
+    padding: 2px 4px;
+    font-size: calc(clamp(0.82rem, 1.05vw, 0.98rem) * var(--font-scale));
+    background: transparent;
+    width: 100%;
+    min-width: 60px;
+    color: inherit;
+  }
+
+  .search-container i {
+    color: #5e7468;
+    margin-right: 7px;
+    font-size: clamp(0.85rem, 1.05vw, 1rem);
+    flex-shrink: 0;
+  }
+
+  /* Dropdown do Usuário Colado no Botão */
+  .user-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .dropdown-btn {
+    background-color: var(--primary-color);
+    color: #feffe0;
+  }
+
+  .dropdown-btn:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.02);
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background-color: #ffffff;
+    min-width: 185px;
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    z-index: 1000;
+    overflow: hidden;
+  }
+
+  .dropdown-content a {
+    color: var(--text-light);
+    padding: 10px 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: calc(0.9rem * var(--font-scale));
+    border-radius: 0;
+    transition: background 0.2s ease;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #f3f4f6;
+  }
+
+  .dropdown-content hr {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 0;
+  }
+
+  .user-dropdown.active .dropdown-content {
+    display: block;
+  }
+
+  body.dark-mode .dropdown-content {
+    background-color: #2c2c2c;
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.4);
+  }
+
+  body.dark-mode .dropdown-content a {
+    color: #fff9e0;
+  }
+
+  body.dark-mode .dropdown-content a:hover {
+    background-color: #3a4d4e;
+  }
+
+  body.dark-mode .dropdown-content hr {
+    border-top: 1px solid #4a5c4e;
+  }
+
+  /* Main - Disposição em Duas Colunas Equilibradas */
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 1280px;
+    margin: clamp(18px, 3vw, 30px) auto;
+    padding: 0 clamp(12px, 2.5vw, 20px);
+  }
+
+  .painel-agendamentos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: clamp(16px, 2.5vw, 28px);
+    align-items: start;
+  }
+
+  .secao-agendamento {
+    background-color: #fffdf6;
+    padding: clamp(18px, 2.5vw, 26px);
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    border: 1px solid rgba(52, 92, 70, 0.12);
+  }
+
+  .secao-agendamento h1 {
+    color: var(--primary-color);
+    font-size: calc(clamp(1.2rem, 1.8vw, 1.5rem) * var(--font-scale));
+    padding-bottom: 14px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .lista-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .vazio-msg {
+    text-align: center;
+    color: #64748b;
+    padding: 30px 15px;
+    font-size: calc(0.95rem * var(--font-scale));
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 10px;
+  }
+
+  /* Consultas e Vacinas Cards Estruturados */
+  .consulta, .vacina {
+    background: var(--card-light);
+    backdrop-filter: blur(6px);
+    padding: clamp(16px, 2.2vw, 20px);
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    color: #feffe0;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .consulta:hover, .vacina:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+  }
+
+  .card-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    border-bottom: 1px solid rgba(254, 255, 224, 0.2);
+    padding-bottom: 8px;
+  }
+
+  .card-topo strong {
+    font-size: calc(clamp(1.02rem, 1.3vw, 1.15rem) * var(--font-scale));
+    color: var(--accent-color);
+    line-height: 1.3;
+  }
+
+  .badge-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: calc(0.78rem * var(--font-scale));
+    font-weight: bold;
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  .badge-status.cancelada {
+    background: rgba(220, 38, 38, 0.85);
+    color: #fff;
+  }
+
+  .badge-status.confirmada {
+    background: rgba(22, 163, 74, 0.85);
+    color: #fff;
+  }
+
+  .card-detalhes {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: calc(0.92rem * var(--font-scale));
+  }
+
+  .card-detalhes p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .card-detalhes i {
+    color: var(--accent-color);
+    width: 16px;
+    text-align: center;
+  }
+
+  .card-acoes {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 6px;
+  }
+
+  .consulta button, .vacina button {
+    height: var(--btn-height);
+    min-height: var(--btn-height);
+    padding: 0 14px;
+    font-size: calc(0.85rem * var(--font-scale));
+    font-weight: bold;
+    background-color: #c53030;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  .consulta button:hover, .vacina button:hover {
+    background-color: #9b2c2c;
+    transform: scale(1.03);
+  }
+
+  /* Rodapé */
+  footer {
+    border-top: 20px solid #3a4d4ee6;
+    background-color: #3a4d4ee6;
+    color: white;
+    text-align: center;
+    padding: 24px 16px;
+    margin-top: auto;
+  }
+
+  footer p {
+    margin: 4px 0;
+    font-size: calc(0.85rem * var(--font-scale));
+  }
+
+  /* MENU DE ACESSIBILIDADE FLUTUANTE */
+  #acessibilidade-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #2e5a44;
+    border: 2px solid #feffe0;
+    border-radius: 50%;
+    width: clamp(48px, 6vw, 56px);
+    height: clamp(48px, 6vw, 56px);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  #acessibilidade-btn:hover {
+    transform: scale(1.08);
+    background: var(--primary-color);
+  }
+
+  #acessibilidade-btn i {
+    font-size: clamp(20px, 2.6vw, 24px);
+    color: #feffe0;
+  }
+
+  #menu-acessibilidade {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(350px, 100%);
+    height: 100%;
+    background: #ffffff;
+    color: var(--text-light);
+    box-shadow: -6px 0 20px rgba(0,0,0,0.2);
+    padding: 20px;
+    transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1001;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  body.dark-mode #menu-acessibilidade {
+    background: #252525;
+    color: #f1f1f1;
+  }
+
+  #menu-acessibilidade.active {
+    right: 0;
+  }
+
+  .acessibilidade-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+  }
+
+  body.dark-mode .acessibilidade-header {
+    border-bottom-color: #3d3d3d;
+  }
+
+  #menu-acessibilidade h3 {
+    color: var(--primary-color);
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  body.dark-mode #menu-acessibilidade h3 {
+    color: #7bc49b;
+  }
+
+  .btn-fechar-acessibilidade {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #718096;
+    transition: color 0.2s;
+  }
+
+  .btn-fechar-acessibilidade:hover {
+    color: #e53e3e;
+  }
+
+  .acessibilidade-secao {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .acessibilidade-secao span {
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #718096;
+  }
+
+  .acessibilidade-grid-botoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  #menu-acessibilidade button.acc-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 6px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #f7fafc;
+    color: var(--text-light);
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  body.dark-mode #menu-acessibilidade button.acc-action {
+    background: #323232;
+    border-color: #4a4a4a;
+    color: #e2e8f0;
+  }
+
+  #menu-acessibilidade button.acc-action i {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+  }
+
+  body.dark-mode #menu-acessibilidade button.acc-action i {
+    color: #7bc49b;
+  }
+
+  #menu-acessibilidade button.acc-action:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+  }
+
+  #menu-acessibilidade button.acc-action:hover i {
+    color: white;
+  }
+
+  #menu-acessibilidade button.acc-action.ativo {
+    background: #2b4c39;
+    color: white;
+    border-color: #2b4c39;
+  }
+
+  #menu-acessibilidade button.acc-action.ativo i {
+    color: white;
+  }
+
+  #menu-acessibilidade .reset-full {
+    background: #fff5f5;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s;
+    margin-top: 4px;
+    font-size: 0.9rem;
+  }
+
+  #menu-acessibilidade .reset-full:hover {
+    background: #fed7d7;
+  }
+
+  /* Estados de Acessibilidade no Body */
+  body.tema-invertido { filter: invert(100%) hue-rotate(180deg); }
+  body.tema-mono { filter: grayscale(100%); }
+  body.espaco-mais { letter-spacing: 1.8px !important; line-height: 1.9 !important; }
+  body.espaco-menos { letter-spacing: -0.4px !important; line-height: 1.25 !important; }
+
+  body.links-realçados a {
+    background: yellow !important;
+    color: black !important;
+    padding: 3px 6px;
+    border-radius: 4px;
+    outline: 2px solid black;
+    font-weight: bold;
+  }
+
+  body.sem-animacoes *, body.sem-animacoes *::before, body.sem-animacoes *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+</style>
+</head>
+<body>
+
+  <nav aria-label="Navegação Principal">
+   
+    
+   <img src="imagens/logocolorida.png" alt="Logo">
+    <div class="links">
+      <a href="telainicio.html"><i class="fas fa-home" aria-hidden="true"></i> Início</a>
+      <a href="agendamento.html"><i class="fa fa-calendar" aria-hidden="true"></i> Agendamento</a>
+      <a href="servidor.html"><i class="fas fa-phone" aria-hidden="true"></i> Servidor</a>
+      <a href="consultas.html"><i class="fas fa-stethoscope"></i> Consultas</a>
+      <a href="exames.html"><i class="fas fa-vials"></i> Exames</a>
+      <a href="vacinacao.html"><i class="fas fa-syringe"></i> Vacinação</a>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: nowrap;">
+      <div class="search-container">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <input type="text" placeholder="Pesquisar agenda" aria-label="Pesquisar no site">
+      </div>
+    </div>
+      <div>
+        <a href="cadastro.html" class="btn-cadastro" id="btnAcesso">
+          <i class="fas fa-user" aria-hidden="true"></i> Entrar / Cadastrar
+        </a>
+
+        <div class="user-dropdown" id="areaUsuario" style="display: none;">
+          <button class="dropdown-btn" id="dropdownBtn" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user-circle" aria-hidden="true"></i> 
+            <span id="nomeUsuarioTexto">Usuário</span> 
+            <i class="fas fa-chevron-down arrow-icon" aria-hidden="true"></i>
+          </button>
+          
+          <div class="dropdown-content" id="dropdownContent">
+            <a href="perfil.html"><i class="fas fa-id-card" aria-hidden="true"></i> Meu Perfil</a>
+            <hr>
+            <a href="#" onclick="sairDaConta(); return false;"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Sair</a>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-darkmode" id="toggleDarkMode" aria-label="Alternar modo escuro geral">
+  <i class="fas fa-moon" id="iconDarkMode" aria-hidden="true"></i> 
+  <span id="textDarkMode">Modo Escuro</span>
+</button>
+    </div>
+  </nav>
+
+  <!-- Botão de Acessibilidade Flutuante -->
+  <button id="acessibilidade-btn" aria-label="Abrir menu de acessibilidade" aria-expanded="false" accesskey="a">
+    <i class="fas fa-universal-access" aria-hidden="true"></i>
+  </button>
+
+  <!-- Painel de Acessibilidade -->
+  <aside id="menu-acessibilidade" aria-label="Menu de Acessibilidade">
+    <div class="acessibilidade-header">
+      <h3><i class="fas fa-universal-access"></i> Acessibilidade</h3>
+      <button class="btn-fechar-acessibilidade" id="btn-fechar-acc" aria-label="Fechar menu">&times;</button>
+    </div>
+    
+    <div class="acessibilidade-secao">
+      <span>Contraste</span>
+      <div class="acessibilidade-grid-botoes">
+        <button id="btn-contraste-invertido" class="acc-action" accesskey="i">
+          <i class="fas fa-adjust"></i> Invertido (ALT+i)
+        </button>
+        <button id="btn-contraste-mono" class="acc-action" accesskey="m">
+          <i class="fas fa-eye-slash"></i> Monocromático (ALT+m)
+        </button>
+      </div>
+    </div>
+
+    <div class="acessibilidade-secao">
+      <span>Tamanho da Fonte</span>
+      <div class="acessibilidade-grid-botoes">
+        <button id="btn-aumenta-fonte" class="acc-action" accesskey="+">
+          <i class="fas fa-search-plus"></i> Aumentar (ALT++)
+        </button>
+        <button id="btn-diminui-fonte" class="acc-action" accesskey="-">
+          <i class="fas fa-search-minus"></i> Diminuir (ALT+-)
+        </button>
+      </div>
+    </div>
+
+    <div class="acessibilidade-secao">
+      <span>Espaçamento</span>
+      <div class="acessibilidade-grid-botoes">
+        <button id="btn-espaco-mais" class="acc-action" accesskey="3">
+          <i class="fas fa-text-width"></i> Expandir (ALT+3)
+        </button>
+        <button id="btn-espaco-menos" class="acc-action" accesskey="4">
+          <i class="fas fa-text-height"></i> Reduzir (ALT+4)
+        </button>
+      </div>
+    </div>
+
+    <div class="acessibilidade-secao">
+      <span>Navegação e Leitura</span>
+      <div class="acessibilidade-grid-botoes">
+        <button id="btn-leitor" class="acc-action" accesskey="l">
+          <i class="fas fa-volume-up"></i> Leitor (ALT+l)
+        </button>
+        <button id="btn-links" class="acc-action" accesskey="7">
+          <i class="fas fa-link"></i> Destacar Links (ALT+7)
+        </button>
+        <button id="btn-animacoes" class="acc-action" style="grid-column: span 2;" accesskey="6">
+          <i class="fas fa-bolt"></i> Pausar / Ligar Animações (ALT+6)
+        </button>
+      </div>
+    </div>
+
+    <button id="btn-reset" class="reset-full" accesskey="0">
+      <i class="fas fa-undo"></i> Restaurar Padrões (ALT+0)
+    </button>
+  </aside>
+
+  <main id="conteudo-principal">
+    <section class="secao-agendamento" aria-labelledby="titulo-consultas">
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 20px;">
+    <h1 id="titulo-consultas" style="border: none; padding: 0; margin: 0;"><i class="fas fa-stethoscope"></i> Consultas Agendadas</h1>
+    <button onclick="limparCanceladas('consultas')" style="background: #e53e3e; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 5px;">
+      <i class="fas fa-trash-alt"></i> Limpar Canceladas
+    </button>
+  </div>
+  <div id="listaConsultas" class="lista-cards"></div>
+</section>
+
+<section class="secao-agendamento" aria-labelledby="titulo-vacinas">
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 20px;">
+    <h1 id="titulo-vacinas" style="border: none; padding: 0; margin: 0;"><i class="fas fa-syringe"></i> Vacinas Agendadas</h1>
+    <button onclick="limparCanceladas('vacinas')" style="background: #e53e3e; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 5px;">
+      <i class="fas fa-trash-alt"></i> Limpar Canceladas
+    </button>
+  </div>
+  <div id="listaVacinas" class="lista-cards"></div>
+</section>
+
+  </main>
+
+  <footer>
+    
+  </footer>
+
+  <script>
+  function sairDaConta() {
+    localStorage.removeItem("usuarioLogado");
+    localStorage.removeItem("usuarioNome");
+    window.location.reload();
+  }
+
+  function obterDadosUsuarioLogado() {
+    const rawLogado = localStorage.getItem("usuarioLogado");
+    const rawNome = localStorage.getItem("usuarioNome");
+
+    if (rawLogado) {
+      try {
+        const parsed = JSON.parse(rawLogado);
+        if (typeof parsed === "object" && parsed !== null) {
+          return {
+            nome: String(parsed.nome || parsed.usuario || "").trim(),
+            email: String(parsed.email || "").trim().toLowerCase(),
+            cpf: String(parsed.cpf || "").replace(/\D/g, "")
+          };
+        }
+      } catch (e) {
+        return { nome: String(rawLogado).trim(), email: "", cpf: "" };
+      }
+    }
+
+    if (rawNome) {
+      return { nome: String(rawNome).trim(), email: "", cpf: "" };
+    }
+
+    return null;
+  }
+
+  function normalizarTexto(txt) {
+    return String(txt || "")
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function pertenceAoUsuarioLogado(registro, usuario) {
+    if (!usuario || !usuario.nome) return false;
+
+    // Se o registro tiver email ou CPF salvo, compara primeiro por identificador único
+    if (usuario.email && registro.email) {
+      return normalizarTexto(registro.email) === normalizarTexto(usuario.email);
+    }
+    if (usuario.cpf && registro.cpf) {
+      return String(registro.cpf).replace(/\D/g, "") === usuario.cpf;
+    }
+
+    // Fallback pelo nome completo cadastrado na conta
+    return normalizarTexto(registro.nome) === normalizarTexto(usuario.nome);
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // 1. Modo Escuro Geral
+    const isDarkMode = localStorage.getItem("darkMode") === "enabled";
+    const btnDark = document.getElementById("toggleDarkMode");
+    const iconDark = document.getElementById("iconDarkMode");
+    const textDark = document.getElementById("textDarkMode");
+
+    function atualizarBotaoDarkMode(ativado) {
+      if (ativado) {
+        if (iconDark) iconDark.className = "fas fa-sun";
+        if (textDark) textDark.textContent = "Modo Claro";
+      } else {
+        if (iconDark) iconDark.className = "fas fa-moon";
+        if (textDark) textDark.textContent = "Modo Escuro";
+      }
+    }
+
+    if (isDarkMode) {
+      document.body.classList.add("dark-mode");
+      atualizarBotaoDarkMode(true);
+    } else {
+      atualizarBotaoDarkMode(false);
+    }
+
+    if (btnDark) {
+      btnDark.addEventListener("click", function() {
+        document.body.classList.toggle("dark-mode");
+        const ativado = document.body.classList.contains("dark-mode");
+
+        if (ativado) {
+          localStorage.setItem("darkMode", "enabled");
+          atualizarBotaoDarkMode(true);
+        } else {
+          localStorage.setItem("darkMode", "disabled");
+          atualizarBotaoDarkMode(false);
+        }
+      });
+    }
+
+    // 2. Preenche nome do usuário se houver cadastro
+    const usuarioAtual = obterDadosUsuarioLogado();
+    const nomeUsuario = usuarioAtual ? usuarioAtual.nome : null;
+    const btnAcesso = document.getElementById("btnAcesso");
+    const areaUsuario = document.getElementById("areaUsuario");
+    const nomeUsuarioTexto = document.getElementById("nomeUsuarioTexto");
+
+    if (nomeUsuario) {
+      if (btnAcesso) btnAcesso.style.display = "none";
+      if (areaUsuario) areaUsuario.style.display = "inline-block";
+      const primeiroNome = String(nomeUsuario).split(" ")[0];
+      if (nomeUsuarioTexto) nomeUsuarioTexto.textContent = primeiroNome;
+    } else {
+      if (btnAcesso) btnAcesso.style.display = "inline-flex";
+      if (areaUsuario) areaUsuario.style.display = "none";
+    }
+
+    const dropdownBtn = document.getElementById("dropdownBtn");
+    const areaDropdown = document.getElementById("areaUsuario");
+
+    if (dropdownBtn) {
+      dropdownBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        const isActive = areaDropdown.classList.toggle("active");
+        dropdownBtn.setAttribute("aria-expanded", isActive);
+      });
+    }
+
+    document.addEventListener("click", function(e) {
+      if (areaDropdown && !areaDropdown.contains(e.target)) {
+        areaDropdown.classList.remove("active");
+        if (dropdownBtn) dropdownBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    // 3. Acessibilidade
+    const btnMenu = document.getElementById("acessibilidade-btn");
+    const btnFecharAcc = document.getElementById("btn-fechar-acc");
+    const menu = document.getElementById("menu-acessibilidade");
+
+    if (btnMenu) {
+      btnMenu.addEventListener("click", () => {
+        const isActive = menu.classList.toggle("active");
+        btnMenu.setAttribute("aria-expanded", isActive);
+      });
+    }
+
+    if (btnFecharAcc) {
+      btnFecharAcc.addEventListener("click", () => {
+        menu.classList.remove("active");
+        if (btnMenu) btnMenu.setAttribute("aria-expanded", "false");
+      });
+    }
+
+    let currentScale = parseFloat(localStorage.getItem("fontScale")) || 1;
+    if (currentScale !== 1) {
+      document.documentElement.style.setProperty('--font-scale', currentScale);
+    }
+
+    const btnAf = document.getElementById("btn-aumenta-fonte");
+    if (btnAf) {
+      btnAf.onclick = () => {
+        if (currentScale < 1.5) {
+          currentScale = Math.round((currentScale + 0.1) * 10) / 10;
+          document.documentElement.style.setProperty('--font-scale', currentScale);
+          localStorage.setItem("fontScale", currentScale);
+        }
+      };
+    }
+
+    const btnDf = document.getElementById("btn-diminui-fonte");
+    if (btnDf) {
+      btnDf.onclick = () => {
+        if (currentScale > 0.8) {
+          currentScale = Math.round((currentScale - 0.1) * 10) / 10;
+          document.documentElement.style.setProperty('--font-scale', currentScale);
+          localStorage.setItem("fontScale", currentScale);
+        }
+      };
+    }
+
+    function salvarClassesAcessibilidade() {
+      const classesParaSalvar = [];
+      ["tema-invertido", "tema-mono", "espaco-mais", "espaco-menos", "links-realçados", "sem-animacoes"].forEach(cls => {
+        if (document.body.classList.contains(cls)) {
+          classesParaSalvar.push(cls);
+        }
+      });
+      localStorage.setItem("accessibilityClasses", JSON.stringify(classesParaSalvar));
+      atualizarEstadosBotoesAcc();
+    }
+
+    function atualizarEstadosBotoesAcc() {
+      const btnInv = document.getElementById("btn-contraste-invertido");
+      const btnMono = document.getElementById("btn-contraste-mono");
+      const btnEspMais = document.getElementById("btn-espaco-mais");
+      const btnEspMenos = document.getElementById("btn-espaco-menos");
+      const btnLinks = document.getElementById("btn-links");
+      const btnAnim = document.getElementById("btn-animacoes");
+
+      if (btnInv) btnInv.classList.toggle("ativo", document.body.classList.contains("tema-invertido"));
+      if (btnMono) btnMono.classList.toggle("ativo", document.body.classList.contains("tema-mono"));
+      if (btnEspMais) btnEspMais.classList.toggle("ativo", document.body.classList.contains("espaco-mais"));
+      if (btnEspMenos) btnEspMenos.classList.toggle("ativo", document.body.classList.contains("espaco-menos"));
+      if (btnLinks) btnLinks.classList.toggle("ativo", document.body.classList.contains("links-realçados"));
+      if (btnAnim) btnAnim.classList.toggle("ativo", document.body.classList.contains("sem-animacoes"));
+    }
+
+    const contrastModes = ["tema-invertido", "tema-mono"];
+    function setMode(mode) {
+      contrastModes.forEach(m => document.body.classList.remove(m));
+      if (!document.body.classList.contains(mode)) {
+        document.body.classList.add(mode);
+      }
+      salvarClassesAcessibilidade();
+    }
+
+    const btnCI = document.getElementById("btn-contraste-invertido");
+    if (btnCI) btnCI.onclick = () => setMode("tema-invertido");
+
+    const btnCM = document.getElementById("btn-contraste-mono");
+    if (btnCM) btnCM.onclick = () => setMode("tema-mono");
+
+    const btnEm = document.getElementById("btn-espaco-mais");
+    if (btnEm) {
+      btnEm.onclick = () => {
+        document.body.classList.remove("espaco-menos");
+        document.body.classList.toggle("espaco-mais");
+        salvarClassesAcessibilidade();
+      };
+    }
+
+    const btnEmen = document.getElementById("btn-espaco-menos");
+    if (btnEmen) {
+      btnEmen.onclick = () => {
+        document.body.classList.remove("espaco-mais");
+        document.body.classList.toggle("espaco-menos");
+        salvarClassesAcessibilidade();
+      };
+    }
+
+    const leitorBtn = document.getElementById("btn-leitor");
+    let leitorAtivo = false;
+    if (leitorBtn) {
+      leitorBtn.onclick = () => {
+        const mainContent = document.getElementById("conteudo-principal");
+        if (!leitorAtivo) {
+          if ('speechSynthesis' in window && mainContent) {
+            const utterance = new SpeechSynthesisUtterance(mainContent.innerText);
+            utterance.lang = 'pt-BR';
+            speechSynthesis.speak(utterance);
+            leitorBtn.classList.add("ativo");
+            leitorAtivo = true;
+          } else {
+            alert("Seu navegador não suporta leitura de tela nativa.");
+          }
+        } else {
+          speechSynthesis.cancel();
+          leitorBtn.classList.remove("ativo");
+          leitorAtivo = false;
+        }
+      };
+    }
+
+    const animBtn = document.getElementById("btn-animacoes");
+    if (animBtn) {
+      animBtn.onclick = () => {
+        document.body.classList.toggle("sem-animacoes");
+        salvarClassesAcessibilidade();
+      };
+    }
+
+    const linksBtn = document.getElementById("btn-links");
+    if (linksBtn) {
+      linksBtn.onclick = () => {
+        document.body.classList.toggle("links-realçados");
+        salvarClassesAcessibilidade();
+      };
+    }
+
+    const btnReset = document.getElementById("btn-reset");
+    if (btnReset) {
+      btnReset.onclick = () => {
+        contrastModes.forEach(m => document.body.classList.remove(m));
+        document.body.classList.remove("espaco-mais", "espaco-menos", "links-realçados", "sem-animacoes");
+        currentScale = 1;
+        document.documentElement.style.setProperty('--font-scale', 1);
+        localStorage.removeItem("fontScale");
+        localStorage.removeItem("accessibilityClasses");
+        if ('speechSynthesis' in window) speechSynthesis.cancel();
+        leitorAtivo = false;
+        atualizarEstadosBotoesAcc();
+        if (menu) menu.classList.remove("active");
+        if (btnMenu) btnMenu.setAttribute("aria-expanded", "false");
+      };
+    }
+
+    const savedClasses = JSON.parse(localStorage.getItem("accessibilityClasses"));
+    if (Array.isArray(savedClasses)) {
+      savedClasses.forEach(cls => document.body.classList.add(cls));
+    }
+
+    atualizarEstadosBotoesAcc();
+    carregarConsultas();
+    carregarVacinas();
+  });
+
+  function carregarConsultas() {
+    const lista = document.getElementById("listaConsultas");
+    const usuario = obterDadosUsuarioLogado();
+
+    if (!usuario || !usuario.nome) {
+      lista.innerHTML = `<div class="vazio-msg">Faça login para visualizar suas consultas agendadas.</div>`;
+      return;
+    }
+
+    const consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+    const minhasConsultas = consultas
+      .map((c, index) => ({ ...c, indexOriginal: index }))
+      .filter(c => pertenceAoUsuarioLogado(c, usuario));
+
+    if (minhasConsultas.length === 0) {
+      lista.innerHTML = `<div class="vazio-msg">Nenhuma consulta encontrada para ${usuario.nome}.</div>`;
+      return;
+    }
+
+    lista.innerHTML = "";
+    minhasConsultas.forEach((c) => {
+      const isCancelada = c.status === "Cancelada";
+      const badgeClasse = isCancelada ? "cancelada" : (c.confirmada ? "confirmada" : "");
+      const statusTexto = isCancelada ? "✖ Cancelada" : (c.confirmada ? "✔ Confirmada" : "⏳ Pendente");
+
+      const div = document.createElement("div");
+      div.className = "consulta";
+      div.innerHTML = `
+        <div class="card-topo">
+          <strong>${c.nome}</strong>
+          <span class="badge-status ${badgeClasse}">${statusTexto}</span>
+        </div>
+        <div class="card-detalhes">
+          <p><i class="fas fa-user-md"></i> <span><strong>Especialidade:</strong> ${c.especialidade}</span></p>
+          <p><i class="fas fa-calendar-day"></i> <span><strong>Data:</strong> ${c.data} às ${c.hora}</span></p>
+        </div>
+        ${!isCancelada ? `
+          <div class="card-acoes">
+            <button onclick="cancelarConsulta(${c.indexOriginal})"><i class="fas fa-times-circle"></i> Cancelar</button>
+          </div>
+        ` : ''}
+      `;
+      lista.appendChild(div);
+    });
+  }
+
+  function cancelarConsulta(index) {
+    Swal.fire({
+      title: "Tem certeza?",
+      text: "Você deseja realmente cancelar esta consulta?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#739970",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, cancelar",
+      cancelButtonText: "Não"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+        consultas[index].status = "Cancelada";
+        consultas[index].confirmada = false;
+        localStorage.setItem("consultas", JSON.stringify(consultas));
+        carregarConsultas();
+
+        Swal.fire({
+          title: "Cancelada!",
+          text: "Sua consulta foi registrada como cancelada no histórico.",
+          icon: "success",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#739970"
+        });
+      }
+    });
+  }
+
+  function carregarVacinas() {
+    const lista = document.getElementById("listaVacinas");
+    const usuario = obterDadosUsuarioLogado();
+
+    if (!usuario || !usuario.nome) {
+      lista.innerHTML = `<div class="vazio-msg">Faça login para visualizar suas vacinas agendadas.</div>`;
+      return;
+    }
+
+    const vacinas = JSON.parse(localStorage.getItem("agendamentosVacinas")) || [];
+    const minhasVacinas = vacinas
+      .map((v, index) => ({ ...v, indexOriginal: index }))
+      .filter(v => pertenceAoUsuarioLogado(v, usuario));
+
+    if (minhasVacinas.length === 0) {
+      lista.innerHTML = `<div class="vazio-msg">Nenhuma vacina encontrada para ${usuario.nome}.</div>`;
+      return;
+    }
+
+    lista.innerHTML = "";
+    minhasVacinas.forEach((v) => {
+      const isCancelada = v.status === "Cancelada";
+      const badgeClasse = isCancelada ? "cancelada" : (v.confirmada ? "confirmada" : "");
+      const statusTexto = isCancelada ? "✖ Cancelada" : (v.confirmada ? "✔ Confirmada" : "⏳ Pendente");
+
+      const div = document.createElement("div");
+      div.className = "vacina";
+      div.innerHTML = `
+        <div class="card-topo">
+          <strong>${v.nome} (${v.categoria || "Geral"})</strong>
+          <span class="badge-status ${badgeClasse}">${statusTexto}</span>
+        </div>
+        <div class="card-detalhes">
+          <p><i class="fas fa-syringe"></i> <span><strong>Vacina:</strong> ${v.vacina}</span></p>
+          <p><i class="fas fa-calendar-day"></i> <span><strong>Data:</strong> ${v.data}${v.hora ? ` às ${v.hora}` : ""}</span></p>
+        </div>
+        ${!isCancelada ? `
+          <div class="card-acoes">
+            <button onclick="cancelarVacina(${v.indexOriginal})"><i class="fas fa-times-circle"></i> Cancelar</button>
+          </div>
+        ` : ''}
+      `;
+      lista.appendChild(div);
+    });
+  }
+
+  function cancelarVacina(index) {
+    Swal.fire({
+      title: "Tem certeza?",
+      text: "Você deseja realmente cancelar este agendamento da vacina?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#739970",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, cancelar",
+      cancelButtonText: "Não"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let vacinas = JSON.parse(localStorage.getItem("agendamentosVacinas")) || [];
+        vacinas[index].status = "Cancelada";
+        vacinas[index].confirmada = false;
+        localStorage.setItem("agendamentosVacinas", JSON.stringify(vacinas));
+        carregarVacinas();
+
+        Swal.fire({
+          title: "Cancelada!",
+          text: "Seu agendamento de vacina foi registrado como cancelado no histórico.",
+          icon: "success",
+          confirmButtonColor: "#739970"
+        });
+      }
+    });
+  }
+
+  // Apaga permanentemente apenas os registros cancelados da conta logada
+  function limparCanceladas(tipo) {
+    const usuario = obterDadosUsuarioLogado();
+    if (!usuario || !usuario.nome) return;
+
+    const chaveStorage = tipo === 'consultas' ? 'consultas' : 'agendamentosVacinas';
+    let itens = JSON.parse(localStorage.getItem(chaveStorage)) || [];
+
+    const temCanceladosDoUsuario = itens.some(
+      item => pertenceAoUsuarioLogado(item, usuario) && item.status === "Cancelada"
+    );
+
+    if (!temCanceladosDoUsuario) {
+      Swal.fire({
+        title: "Nenhum registro para limpar",
+        text: "Não há itens cancelados na sua conta no momento.",
+        icon: "info",
+        confirmButtonColor: "#345c46"
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: "Remover cancelados?",
+      text: "Deseja apagar permanentemente todos os seus registros cancelados?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#345c46",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, limpar",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const itensRestantes = itens.filter(
+          item => !(pertenceAoUsuarioLogado(item, usuario) && item.status === "Cancelada")
+        );
+        localStorage.setItem(chaveStorage, JSON.stringify(itensRestantes));
+
+        if (tipo === 'consultas') {
+          carregarConsultas();
+        } else {
+          carregarVacinas();
+        }
+
+        Swal.fire({
+          title: "Limpo!",
+          text: "Seus registros cancelados foram removidos com sucesso.",
+          icon: "success",
+          confirmButtonColor: "#345c46"
+        });
+      }
+    });
+  }
+</script>
+</body>
+</html>
