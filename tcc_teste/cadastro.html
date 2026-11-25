@@ -1,115 +1,135 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Cadastro</title>
+  <title>Login / Cadastro - SBS</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
+    body {
+      font-family: Verdana, Arial, sans-serif;
+      background: linear-gradient(135deg, #e8e8e0, #e8e8e0); 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
 
-body {
-  font-family: Verdana, Arial, sans-serif;
-  background: linear-gradient(135deg, #ffffff, #ffffff); 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-}
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 450px;
+      animation: fadeIn 0.6s ease-in-out;
+    }
 
-.container {
-  background: #fff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-  width: 100%;
-  max-width: 450px;
-  animation: fadeIn 0.6s ease-in-out;
-}
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(20px);}
-  to {opacity: 1; transform: translateY(0);}
-}
+    h2 {
+      text-align: center;
+      color: #739970; 
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
 
-h2 {
-  text-align: center;
-  color: #739970; 
-  margin-bottom: 25px;
-  font-size: 1.8rem;
-}
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #444;
+    }
 
-label {
-  display: block;
-  margin-top: 15px;
-  font-weight: 600;
-  color: #444;
-}
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
 
-input, select {
-  width: 100%;
-  padding: 12px;
-  margin-top: 6px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
+    input:focus, select:focus {
+      border-color: #739970;
+      box-shadow: 0 0 6px rgba(115,153,112,0.3);
+      outline: none;
+    }
 
-input:focus, select:focus {
-  border-color: #739970;
-  box-shadow: 0 0 6px rgba(115,153,112,0.3);
-  outline: none;
-}
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 25px;
+      background: #739970; 
+      color: #feffe0;      
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
 
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 25px;
-  background: #739970; 
-  color: #feffe0;       
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
+    button:hover {
+      background: #5a7a55; 
+      transform: scale(1.02);
+    }
 
-button:hover {
-  background: #86b483; 
-  transform: scale(1.02);
-}
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #444;
+    }
 
-.login-link {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.95rem;
-}
+    .login-link a {
+      color: #345c46;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
-.login-link a {
-  color: #e8c889;
-  text-decoration: none;
-  font-weight: bold;
-}
+    .login-link a:hover {
+      text-decoration: underline;
+    }
 
-.login-link a:hover {
-  text-decoration: underline;
-}
-
-.alerta-idade {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #d84315; 
-  text-align: center;
-}
-
+    .alerta-idade {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #d84315; 
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
 
-<div class="container" id="cadastroForm">
+<!-- TELA DE LOGIN (AGORA APARECE PRIMEIRO) -->
+<div class="container" id="loginForm">
+  <h2>Login SBS</h2>
+  <form id="formLogin">
+    <label for="cpfLogin">CPF</label>
+    <input type="text" id="cpfLogin" name="cpfLogin" pattern="\d{11}" placeholder="Digite 11 números" required>
+
+    <label for="senhaLogin">Senha</label>
+    <input type="password" id="senhaLogin" name="senhaLogin" required>
+
+    <button type="submit">Entrar</button>
+  </form>
+  <div class="login-link">
+    Não tem conta? <a href="#" onclick="mostrarCadastro(); return false;">Cadastre-se</a>
+  </div>
+</div>
+
+<!-- TELA DE CADASTRO (INICIALMENTE OCULTA) -->
+<div class="container" id="cadastroForm" style="display:none;">
   <h2>Cadastro SBS</h2>
   <form id="formCadastro">
     <label for="nome">Nome Completo</label>
@@ -140,23 +160,7 @@ button:hover {
   </form>
 
   <div class="login-link">
-    Já tem uma conta? <a href="#" onclick="mostrarLogin()">Fazer login</a>
-  </div>
-</div>
-
-<div class="container" id="loginForm" style="display:none;">
-  <h2>Login SBS</h2>
-  <form id="formLogin">
-    <label for="cpfLogin">CPF</label>
-    <input type="text" id="cpfLogin" name="cpfLogin" pattern="\d{11}" placeholder="Digite 11 números" required>
-
-    <label for="senhaLogin">Senha</label>
-    <input type="password" id="senhaLogin" name="senhaLogin" required>
-
-    <button type="submit">Entrar</button>
-  </form>
-  <div class="login-link">
-    Não tem conta? <a href="#" onclick="mostrarCadastro()">Cadastre-se</a>
+    Já tem uma conta? <a href="#" onclick="mostrarLogin(); return false;">Fazer login</a>
   </div>
 </div>
 
@@ -178,10 +182,13 @@ function mostrarInicio() {
 
 // Alerta de Idade
 document.getElementById("nascimento").addEventListener("change", function() {
+  if (!this.value) return;
+  
   const nascimento = new Date(this.value);
   const hoje = new Date();
   let idade = hoje.getFullYear() - nascimento.getFullYear();
   const m = hoje.getMonth() - nascimento.getMonth();
+  
   if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
     idade--;
   }
@@ -194,57 +201,127 @@ document.getElementById("nascimento").addEventListener("change", function() {
   }
 });
 
-// Evento de Cadastro
-document.getElementById("formCadastro").addEventListener("submit", function(e) {
-  e.preventDefault();
+document.addEventListener("DOMContentLoaded", function() {
 
-  const nome = document.getElementById("nome").value;
-  const cpf = document.getElementById("cpf").value;
-  const sexo = document.getElementById("sexo").value;
-  const nascimento = document.getElementById("nascimento").value;
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
+  // 1. GERENCIAMENTO DE SESSÃO DO PACIENTE NA NAVBAR (Se presente)
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const nomeUsuario = usuarioLogado ? usuarioLogado.nome : localStorage.getItem("usuarioNome");
 
-  // Busca os usuários salvos no localStorage
-  let usuarios = JSON.parse(localStorage.getItem("usuariosSBS")) || [];
+  const btnAcesso = document.getElementById("btnAcesso");
+  const areaUsuario = document.getElementById("areaUsuario");
+  const nomeUsuarioTexto = document.getElementById("nomeUsuarioTexto");
 
-  // Verifica se o CPF já está cadastrado
-  const usuarioExiste = usuarios.some(u => u.cpf === cpf);
-  if (usuarioExiste) {
-    alert("Este CPF já está cadastrado!");
-    return;
-  }
+  if (nomeUsuario) {
+    if (btnAcesso) btnAcesso.style.display = "none";
+    if (areaUsuario) areaUsuario.style.display = "inline-block";
 
-  // Cria e adiciona o novo usuário
-  const novoUsuario = { nome, cpf, sexo, nascimento, email, senha };
-  usuarios.push(novoUsuario);
-
-  // Salva no localStorage
-  localStorage.setItem("usuariosSBS", JSON.stringify(usuarios));
-  localStorage.setItem("usuarioLogado", JSON.stringify(novoUsuario));
-
-  alert("Cadastro realizado com sucesso!");
-  mostrarInicio();
-});
-
-// Evento de Login
-document.getElementById("formLogin").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const cpfLogin = document.getElementById("cpfLogin").value;
-  const senhaLogin = document.getElementById("senhaLogin").value;
-
-  const usuarios = JSON.parse(localStorage.getItem("usuariosSBS")) || [];
-
-  // Procura usuário com CPF e senha correspondentes
-  const usuarioEncontrado = usuarios.find(u => u.cpf === cpfLogin && u.senha === senhaLogin);
-
-  if (usuarioEncontrado) {
-    localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
-    mostrarInicio();
+    const primeiroNome = nomeUsuario.split(" ")[0];
+    if (nomeUsuarioTexto) nomeUsuarioTexto.textContent = primeiroNome;
   } else {
-    alert("CPF ou senha incorretos!");
+    if (btnAcesso) btnAcesso.style.display = "inline-block";
+    if (areaUsuario) areaUsuario.style.display = "none";
   }
+
+  // 2. LÓGICA DO MENU DROPDOWN
+  const dropdownBtn = document.getElementById("dropdownBtn");
+  const areaDropdown = document.getElementById("areaUsuario");
+
+  if (dropdownBtn) {
+    dropdownBtn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      if (areaDropdown) areaDropdown.classList.toggle("active");
+    });
+  }
+
+  document.addEventListener("click", function(e) {
+    if (areaDropdown && !areaDropdown.contains(e.target)) {
+      areaDropdown.classList.remove("active");
+    }
+  });
+
+  // 3. EVENTO DE CADASTRO DO PACIENTE
+  const formCadastro = document.getElementById("formCadastro");
+  if (formCadastro) {
+    formCadastro.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const nome = document.getElementById("nome").value;
+      const cpf = document.getElementById("cpf").value;
+      const sexo = document.getElementById("sexo").value;
+      const nascimento = document.getElementById("nascimento").value;
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+
+      let usuarios = JSON.parse(localStorage.getItem("usuariosSBS")) || [];
+
+      const usuarioExiste = usuarios.some(u => u.cpf === cpf);
+      if (usuarioExiste) {
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            title: "Atenção!",
+            text: "Este CPF já está cadastrado!",
+            icon: "warning",
+            confirmButtonColor: "#739970"
+          });
+        } else {
+          alert("Este CPF já está cadastrado!");
+        }
+        return;
+      }
+
+      const novoUsuario = { nome, cpf, sexo, nascimento, email, senha, perfil: "paciente" };
+      usuarios.push(novoUsuario);
+
+      localStorage.setItem("usuariosSBS", JSON.stringify(usuarios));
+      localStorage.setItem("usuarioLogado", JSON.stringify(novoUsuario));
+
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          title: "Sucesso!",
+          text: "Cadastro realizado com sucesso!",
+          icon: "success",
+          confirmButtonColor: "#739970"
+        }).then(() => {
+          mostrarInicio();
+        });
+      } else {
+        alert("Cadastro realizado com sucesso!");
+        mostrarInicio();
+      }
+    });
+  }
+
+  // 4. EVENTO DE LOGIN DO PACIENTE
+  const formLogin = document.getElementById("formLogin");
+  if (formLogin) {
+    formLogin.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const cpfLogin = document.getElementById("cpfLogin").value;
+      const senhaLogin = document.getElementById("senhaLogin").value;
+
+      const usuarios = JSON.parse(localStorage.getItem("usuariosSBS")) || [];
+
+      const usuarioEncontrado = usuarios.find(u => u.cpf === cpfLogin && u.senha === senhaLogin);
+
+      if (usuarioEncontrado) {
+        localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
+        mostrarInicio();
+      } else {
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            title: "Acesso Negado",
+            text: "CPF ou senha incorretos!",
+            icon: "error",
+            confirmButtonColor: "#739970"
+          });
+        } else {
+          alert("CPF ou senha incorretos!");
+        }
+      }
+    });
+  }
+
 });
 </script>
 </body>

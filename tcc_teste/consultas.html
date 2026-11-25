@@ -2,499 +2,1248 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Consultas</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Básico de Saúde - Consultas</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema Básico de Saúde - Início</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script>
+    (function() {
+      if (localStorage.getItem("darkMode") === "enabled") {
+        document.documentElement.classList.add("dark-mode");
+      }
+      const savedScale = localStorage.getItem("fontScale");
+      if (savedScale) {
+        document.documentElement.style.setProperty('--font-scale', savedScale);
+      }
+      const savedClasses = JSON.parse(localStorage.getItem("accessibilityClasses") || "[]");
+      document.addEventListener("DOMContentLoaded", () => {
+        savedClasses.forEach(cls => document.body.classList.add(cls));
+        if (localStorage.getItem("darkMode") === "enabled") {
+          document.body.classList.add("dark-mode");
+        }
+      });
+    })();
+  </script>
 
   <style>
+  .swal2-container {
+    z-index: 9999 !important;
+  }
 
-body {
-   font-family:  Verdana, sans-serif;
-  margin: 0;
-  background:  #e8e8e0;
-  color: #2d3748;
-  transition: background 0.4s ease, color 0.4s ease;
-  line-height: 1.6;
-  animation: fadeIn 0.6s ease;
-   border-top: 25px solid #3a4d4ee6;
+  :root {
+    --font-scale: 1;
+    --primary-color: #345c46;
+    --primary-hover: #35473d;
+    --accent-color: #e8c889;
+    --bg-light: #e8e8e0;
+    --card-light: #5e7468e6;
+    --text-light: #2d3748;
+    --border-color: #d1d5db;
+    --btn-height: 36px;
+    --action-btn-height: 42px;
+  }
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-size: calc(1rem * var(--font-scale));
+    font-family: Verdana, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-light);
+    transition: background 0.4s ease, color 0.4s ease;
+    line-height: 1.6;
+    animation: fadeIn 0.6s ease;
+    border-top: clamp(8px, 2.5vw, 25px) solid #3a4d4ee6;
+    border-radius: 20px;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Modo Escuro */
+  body.dark-mode {
+    background: #3a4d4e;
+    color: #e8e8e0;
+  }
+
+  body.dark-mode nav {
+    background: #2c2c2c;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  body.dark-mode nav a {
+    color: #fff9e0;
+  }
+
+  body.dark-mode nav a:hover {
+    background-color: #3a4d4e;
+    transform: translateY(-2px);
+  }
+
+  body.dark-mode .search-container {
+    background: #2c2c2c;
+    border: 1px solid #ece6cd;
+  }
+
+  body.dark-mode .search-container i,
+  body.dark-mode .search-container input {
+    color: #fff9e0;
+  }
+
+  body.dark-mode .btn-cadastro,
+  body.dark-mode .dropdown-btn {
+    background-color: #4a5c4e;
+    color: #fff9e0;
+  }
+
+  body.dark-mode .btn-cadastro:hover,
+  body.dark-mode .dropdown-btn:hover {
+    background-color: #5e7468;
+  }
+
+  body.dark-mode .btn-darkmode {
+    background: #3a4d4e;
+    color: #fff9e0;
+  }
+
+  body.dark-mode .btn-darkmode:hover {
+    background: #5e7468;
+  }
+
+  body.dark-mode main {
+    background: #2c2c2c;
+  }
+
+  body.dark-mode main h2 {
+    color: #7bc49b;
+  }
+
+  body.dark-mode .servico {
+    background: #3a4d4e;
+    color: #fff9e0;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  }
+
+  body.dark-mode .servico h3,
+  body.dark-mode .servico p,
+  body.dark-mode .servico i {
+    color: #feffe0;
+  }
+
+  body.dark-mode .vacinacao,
+  body.dark-mode .vacinacao h2,
+  body.dark-mode .vacinacao p {
+    color: #fff9e0;
+  }
+
+  body.dark-mode footer {
+    background-color: #2e3b31;
+    color: #e8c889;
+    border-top: 25px solid #4a5c4e;
+  }
+
+  /* Navegação Sempre em Linha Reta sem Barra de Rolagem */
+  nav {
+    background: #fffdf6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px clamp(8px, 2vw, 24px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: clamp(4px, 0.8vw, 8px);
+    width: 100%;
+    position: relative;
+    z-index: 500;
+  }
+
+  nav img {
+    width: clamp(72px, 10vw, 140px);
+    height: auto;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  nav .links,
+  .nav-links {
+    display: flex;
+    gap: clamp(8px, 1.5vw, 18px);
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  nav a {
+    color: var(--primary-color);
+    padding: clamp(4px, 0.5vw, 6px) clamp(7px, 1vw, 12px);
+    text-decoration: none;
+    font-size: calc(clamp(0.7rem, 1vw, 0.9rem) * var(--font-scale));
+    border-radius: 10px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  nav a:hover {
+    background-color: rgb(243, 246, 243);
+    transform: translateY(-2px);
+  }
+
+  /* Caixa de Pesquisa Ampliada */
+  .search-container {
+    display: flex;
+    align-items: center;
+    border-radius: 22px;
+    padding: 6px clamp(10px, 1.2vw, 16px);
+    height: var(--action-btn-height);
+    border: 1px solid var(--border-color);
+    flex-shrink: 1;
+    min-width: 110px;
+    width: clamp(140px, 20vw, 310px);
+    max-width: 310px;
+  }
+
+  .search-container input {
+    border: none;
+    outline: none;
+    padding: 2px 4px;
+    font-size: calc(clamp(0.82rem, 1.05vw, 0.98rem) * var(--font-scale));
+    background: transparent;
+    width: 100%;
+    min-width: 60px;
+    color: inherit;
+  }
+
+  .search-container i {
+    color: #5e7468;
+    margin-right: 7px;
+    font-size: clamp(0.85rem, 1.05vw, 1rem);
+    flex-shrink: 0;
+  }
+
+  /* Dropdown do Usuário Colado no Botão */
+  .user-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .dropdown-btn {
+    background-color: var(--primary-color);
+    color: #feffe0;
+  }
+
+  .dropdown-btn:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.02);
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background-color: #ffffff;
+    min-width: 195px;
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.14);
+    border-radius: 8px;
+    z-index: 1000;
+    overflow: hidden;
+  }
+
+  .dropdown-content a {
+    color: var(--text-light);
+    padding: 10px 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: calc(0.9rem * var(--font-scale));
+    border-radius: 0;
+    transition: background 0.2s ease;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #f3f4f6;
+  }
+
+  .dropdown-content hr {
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+    margin: 0;
+  }
+
+  .user-dropdown.active .dropdown-content {
+    display: block;
+  }
+
+  body.dark-mode .dropdown-content {
+    background-color: #2c2c2c;
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.4);
+  }
+
+  body.dark-mode .dropdown-content a {
+    color: #fff9e0;
+  }
+
+  body.dark-mode .dropdown-content a:hover {
+    background-color: #3a4d4e;
+  }
+
+  body.dark-mode .dropdown-content hr {
+    border-top: 1px solid #4a5c4e;
+  }
+
+  /* Seção Vacinação */
+  .vacinacao {
+    margin-inline: clamp(16px, 5vw, 100px);
+    border-radius: 20px;
+    padding: clamp(18px, 3vw, 30px);
+    margin-top: clamp(20px, 4vw, 40px);
+    text-align: left;
+  }
+
+  .vacinacao h2 {
+    margin-top: 12px;
+    color: #3a4d4ee6;
+    font-size: calc(clamp(1.5rem, 3.5vw, 2.4rem) * var(--font-scale));
+  }
+
+  .vacinacao p {
+    margin-top: 10px;
+    color: #3a4d4ee6;
+    font-size: calc(clamp(0.95rem, 1.6vw, 1.25rem) * var(--font-scale));
+  }
+
+  /* Main e Serviços */
+  main {
+    background: #fffdf6;
+    padding: clamp(24px, 4vw, 40px) clamp(12px, 3vw, 25px);
+    max-width: 3200px;
+    margin: clamp(16px, 3vw, 30px) clamp(10px, 2vw, 24px);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  main h2 {
+    font-size: calc(clamp(1.35rem, 2.4vw, 2rem) * var(--font-scale));
+    padding-bottom: 10px;
+    color: var(--primary-color);
+    text-align: center;
+  }
+
+  main p {
+    text-align: center;
+    font-size: calc(clamp(0.95rem, 1.4vw, 1.2rem) * var(--font-scale));
+    color: #000000;
+  }
+
+  body.dark-mode main p {
+    color: #fff9e0;
+  }
+
+  .dias-semana {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .dias-semana .btn {
+    display: inline-block;
+    min-width: min(150px, 100%);
+    text-align: center;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: calc(0.92rem * var(--font-scale));
+    transition: all 0.2s ease;
+  }
+
+  .dias-semana .btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+  }
+
+  .servicos {
+    display: none;
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+    gap: clamp(14px, 2vw, 20px);
+    margin-top: 25px;
+  }
+
+  .servicos.active {
+    display: grid;
+  }
+
+  .servico {
+    background: var(--card-light);
+    backdrop-filter: blur(6px);
+    padding: clamp(18px, 2.5vw, 25px);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .servico:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  }
+
+  .servico i {
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    color: var(--accent-color);
+    margin-bottom: 12px;
+  }
+
+  .servico h3 {
+    margin-top: 8px;
+    color: #feffe0;
+    font-size: calc(clamp(1.05rem, 1.5vw, 1.2rem) * var(--font-scale));
+  }
+
+  .servico p {
+    margin: 10px 0 20px 0;
+    color: #feffe0;
+    font-size: calc(clamp(0.9rem, 1.2vw, 1rem) * var(--font-scale));
+  }
+
+  /* Botões Gerais e Destaques (Perfil e Modo Escuro) */
+  .btn {
+    display: inline-block;
+    padding: 10px 18px;
+    background: var(--primary-color);
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-size: calc(0.92rem * var(--font-scale));
+  }
+
+  .btn:hover {
+    background: var(--primary-hover);
+  }
+
+  .btn-cadastro {
+    height: var(--btn-height);
+    min-height: var(--btn-height);
+    padding: 0 clamp(8px, 1vw, 12px);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: calc(clamp(0.75rem, 0.95vw, 0.88rem) * var(--font-scale));
+    font-weight: 500;
+    line-height: 1;
+    transition: background 0.3s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    background: var(--primary-color);
+    color: #feffe0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .btn-cadastro:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.03);
+  }
+
+  .btn-darkmode,
+  .dropdown-btn {
+    height: var(--action-btn-height);
+    min-height: var(--action-btn-height);
+    padding: 0 clamp(12px, 1.5vw, 18px);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: calc(clamp(0.84rem, 1.05vw, 0.98rem) * var(--font-scale));
+    font-weight: 600;
+    line-height: 1;
+    transition: background 0.3s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+
+  .btn-darkmode {
+    background: #444;
+    color: #fff;
+  }
+
+  .btn-darkmode:hover {
+    background: #666;
+    transform: scale(1.02);
+  }
+
+  .btnmodal {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #739970;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: calc(1rem * var(--font-scale));
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+  }
+
+  .btnmodal:hover {
+    background-color: #5a7a55;
+  }
+
+  /* Modal Centralizado Perfeito */
+  .modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  .modal.show {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal-content {
+    background: #fff;
+    padding: clamp(18px, 3vw, 30px);
+    border-radius: 14px;
+    max-width: 440px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: left;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    position: relative;
+    border-top: 6px solid #345c46;
+  }
+
+  body.dark-mode .modal-content {
+    background: #2c2c2c;
+    color: #fff9e0;
+    border-top-color: #7bc49b;
+  }
+
+  .modal-content h2 {
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    font-size: calc(clamp(1.15rem, 1.8vw, 1.3rem) * var(--font-scale));
+    text-align: center;
+  }
+
+  body.dark-mode .modal-content h2 {
+    color: #7bc49b;
+  }
+
+  .modal-content p {
+    color: #64748b;
+    font-size: calc(0.95rem * var(--font-scale));
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  body.dark-mode .modal-content p {
+    color: #cbd5e0;
+  }
+
+  .modal-content label {
+    display: block;
+    color: #2d3748;
+    font-weight: bold;
+    font-size: calc(0.9rem * var(--font-scale));
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+
+  body.dark-mode .modal-content label {
+    color: #fff9e0;
+  }
+
+  .modal-content input,
+  .modal-content select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: calc(0.95rem * var(--font-scale));
+    background: #f8fafc;
+    color: #2d3748;
+  }
+
+  body.dark-mode .modal-content input,
+  body.dark-mode .modal-content select {
+    background: #222;
+    border-color: #444;
+    color: #fff9e0;
+  }
+
+  .close {
+    position: absolute;
+    right: 18px;
+    top: 14px;
+    font-size: 26px;
+    cursor: pointer;
+    color: #739970;
+    transition: color 0.2s;
+  }
+
+  .close:hover {
+    color: #e53e3e;
+  }
+
+  /* FAQ Limpo e Elegante */
+.faq-container {
+  max-width: 960px;
+  margin: clamp(24px, 4vw, 44px) auto;
+  padding: clamp(22px, 3.5vw, 36px);
+  background: #fffdf6;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(52, 92, 70, 0.14);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-
-header {
-  background: linear-gradient(135deg, #42533f, #739970);
-  padding: 40px 20px;
+.faq-header {
   text-align: center;
-  color: #fff;
+  margin-bottom: 28px;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 2.6rem;
-  font-weight: 600;
-}
-
-header p {
-  margin-top: 8px;
-  font-size: 1.2rem;
-  opacity: 0.85;
-}
-
-
-
-nav {
-  background: linear-gradient(135deg, #fffdf6,  #fffdf6);
-  display: flex;
+.faq-badge {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-nav a {
-  color: #345c46;
-  padding: 10px 16px;
-  text-decoration: none;
-  font-size: 1rem;
-  border-radius: 12px;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-nav .links {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-}
-
-
-nav a:hover {
-    background-color: #f3f6f3;
-  transform: translateY(-2px);
-}
-
-nav img {
-  width: 150px;
-  height: auto;
-  display: block;
-}
-
-main {
-  padding: 50px 20px;
-  max-width: 1100px;
-  margin: auto;
-}
-main h2 {
-  font-size: 2.2rem;
-  padding: 20px;
-  color:#345c46;
-  text-align: center;
-}
-
-
-main h1 {
-  padding: 20px;
-  color: #739970; 
-  text-align: center;
-  font-size: 28px;
-}
-
-main p {
-
-  text-align: center;
-  font-size: 20px;
-  color: #000000;
-}
-
-.dias-semana {
-  display: flex;
-  justify-content: center;   
-  flex-wrap: wrap;           
-  gap: 12px;                 
-  margin-top: 20px;
-}
-
-.dias-semana .btn {
-  display: inline-block;
-  min-width: 160px;          
-  text-align: center;
-}
-
-
-
-.card {
-  backdrop-filter: blur(6px);
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
-}
-.card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
-}
-.card i { font-size: 1.5rem; color: #feffe0; margin-bottom: 12px; }
-.card h3 { margin-top: 10px; color: #feffe0;font-size: 1.3rem; }
-.card p { margin-top: 10px; color: #feffe0; font-size: 1.3rem; }
-.card-verde { background: #5e7468e6; }
-.card-azul { background:  #345c46;  }
-
-
-
-.servicos {
-  display: none;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
-}
-.servico {
-  background: #5e7468e6;
-  backdrop-filter: blur(6px);
-  padding: 25px;
-  
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
-}
-.servico:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
-.servico i { font-size: 1.5rem; color: #feffe0; margin-bottom: 12px; }
-.servico h3 { margin-top: 10px; color:#feffe0; font-size: 1.3rem; }
-.servico p { margin-top: 10px; color: #feffe0; font-size: 1.1rem; }
-
-
-.btn {
-  display: inline-block;
-  justify-content: center;
-  margin-top: 15px;
-  padding: 10px 20px;
-  background: #345c46;
-  color: #fff;
-  align-items: center;
-  border-radius: 5px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-
-body.dark-mode { 
-  background: #3a4d4e;
-  color: #e8e8e0;
-}
-
-body.dark-mode nav {
-  background: linear-gradient(135deg, #2c2c2c, #2c2c2c);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-}
-
-body.dark-mode nav a {
-  color: #fff9e0;
-}
-body.dark-mode nav a:hover {
-  background-color: #3a4d4ee6;
-  transform: translateY(-2px);
-}
-
-body.dark-mode .btn-cadastro:hover {
-  background-color: #5e7468;
-}
-
-body.dark-mode .btn-darkmode {
-  background: #3a4d4e;
-  color: #fff9e0;
-}
-body.dark-mode .btn-darkmode:hover {
-  background: #5e7468;
-}
-
-body.dark-mode .grid {
-  background: #2e3b31;
-}
-
-body.dark-mode .grid h2 {
-  color:  #fff9e0;
-}
-body.dark-mode .card {
-  background: #3a4d4e;
-
-  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-}
-
-
-
-
-body.dark-mode footer {
-  background-color: #2e3b31;
-  color: #e8c889;
-  border-top: 25px solid #4a5c4e;
-}
-
-.btn-cadastro, .btn-darkmode {
-  border: none;
-  padding: 10px 18px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-.btn-cadastro {
-   background: #345c46;
-  color: #feffe0;
-}
-.btn-cadastro:hover {
-  background-color:  #35473d;
-  transform: scale(1.05);
-}
-.btn-darkmode {
-  background: #444;
-  color: #fff;
-}
-.btn-darkmode:hover {
-  background: #666;
-}
-
-
-
-
-
-.btn:hover { background: #35473d; }
-
-
-
-.btnmodal {
-  display: inline-block;
-  padding: 12px 24px;
-  background-color:  #35473d;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 15px;
-  transition: background-color 0.3s ease;
-}
-.btnmodal:hover { background-color:  #475e51; }
-
-
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-
-
-.modal.show { display: flex; animation: fadeIn 0.3s ease; }
-.modal-content {
-  background: #fff;
-  padding: 25px;
-  border-radius: 10px;
-  max-width: 420px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
-}
-.modal-content h2 { color: #3f4640; margin-bottom: 15px; font-size: 22px; }
-.modal-content p { color: #3f4640; font-size: 18px; margin-bottom: 15px; }
-.modal-content input {
-  width: 90%; padding: 10px; margin: 8px 0;
-  border: 1px solid #ccc; border-radius: 6px; font-size: 15px;
-}
-
-
-.close { float: right; font-size: 28px; cursor: pointer; color: #739970; }
-.close:hover { color: #5a7a55; }
-
-
-
-
-body.dark-mode .card {
-   backdrop-filter: blur(6px);
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
-}
-body.dark-mode .card-verde{
-  background: #36463de6;
-   color: #ddd;
-  border: 1px solid #444;
-}
-
-body.dark-mode .card-azul {
-  background: #435a5ce6;
-  color: #ddd;
-  border: 1px solid #444;
-}
-body.dark-mode .card h3 {
-  color:  #fff9e0;
-}
-body.dark-mode .card p {
-  color:  #fff9e0; 
-}
-
-
-body.dark-mode .servico {
-  background: #5e7468e6;
-  backdrop-filter: blur(6px);
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
-}
-body.dark-mode .servico h3 {
-  color:  #fff9e0;
-}
-body.dark-mode .servico p {
-  color:  #fff9e0;
-}
-
-
-body.dark-mode .btn {
-  background:#345c46;
-  color:   #ffffff;
-}
-body.dark-mode .btn:hover {
-  background: #284736;
-}
-body.dark-mode .btnmodal {
-  background-color:  #35473d;
-  color: #fff;
-}
-body.dark-mode .btnmodal:hover {
-  background-color:  #35473d;
-}
-
-
-body.dark-mode .modal-content {
-  background: #2c2c2c;
-  color: #e0e0e0;
-  border: 1px solid #444;
-}
-body.dark-mode .modal-content h2,
-body.dark-mode .modal-content p {
-  color: #e0e0e0;
-}
-body.dark-mode .modal-content input {
-  background: #1e1e1e;
-  color: #e0e0e0;
-  border: 1px solid #555;
-}
-body.dark-mode .close {
-  color: #739970;
-}
-body.dark-mode .close:hover {
-  color: #5a7a55;
-}
-
-body.dark-mode footer {
-  background-color: #2c2c2c;
-  color: #bbb;
-}
-
-.btnmodal {
-  display: inline-block;
-  padding: 12px 24px;
-  background-color: #739970;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 15px;
-  transition: background-color 0.3s ease;
-}
-.btnmodal:hover {
-  background-color: #5a7a55;
-}
-
-
-.especialidade-destaque {
-  font-weight: bold;
-  color: #3f4640;
-}
-
-.especialidade-destaque {
-  color:#3f4640;
-  font-weight: bold;
-}
-
-body.dark-mode main p {
-  color: #e0e0e0; 
-}
-
-body.dark-mode main h2 {
-  color:  #fff9e0;
-}
-
-
-.vacinacao {
+  gap: 6px;
+  background: rgba(52, 92, 70, 0.12);
+  color: var(--primary-color, #345c46);
+  padding: 5px 14px;
   border-radius: 20px;
-  padding: 30px;
-  margin-top: 40px;
-  text-align: center;
-}
-.vacinacao h2 {
-  margin-top: 20px;
-  color:#3a4d4ee6;
-  font-size: 2.4rem;
-}
-.vacinacao p {
-  margin-top: 10px;
-  align-items: left;
-  color: #3a4d4ee6;
-  font-size: 1.2rem;
+  font-size: calc(0.8rem * var(--font-scale, 1));
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-body.dark-mode .vacinacao {
-
-  color: #fff9e0;
+.faq-container h2 {
+  color: var(--primary-color, #345c46);
+  font-size: calc(clamp(1.35rem, 2.5vw, 1.85rem) * var(--font-scale, 1));
+  margin-bottom: 8px;
+  line-height: 1.3;
 }
 
-body.dark-mode .vacinacao h2 {
-  color: #fff9e0;
+.faq-intro {
+  color: #526058;
+  font-size: calc(clamp(0.92rem, 1.3vw, 1.02rem) * var(--font-scale, 1));
+  max-width: 680px;
+  margin: 0 auto;
 }
-body.dark-mode .vacinacao p {
- color: #fff9e0;
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
+.faq-item {
+  background: #ffffff;
+  border: 1px solid #dfe5df;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
 
+.faq-item:hover,
+.faq-item.active {
+  border-color: var(--primary-color, #345c46);
+  box-shadow: 0 4px 14px rgba(52, 92, 70, 0.1);
+}
 
-  </style>
+.faq-pergunta {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: #2d3748;
+  transition: background 0.2s ease;
+}
+
+.faq-pergunta:hover {
+  background: #f5f8f5;
+}
+
+.faq-texto-pergunta {
+  flex: 1;
+  font-size: calc(clamp(0.95rem, 1.35vw, 1.05rem) * var(--font-scale, 1));
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.faq-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.95rem;
+}
+
+.faq-avatar.paciente {
+  background: rgba(232, 200, 137, 0.35);
+  color: #5c471b;
+}
+
+.faq-avatar.medico {
+  background: var(--primary-color, #345c46);
+  color: #ffffff;
+}
+
+.faq-chevron {
+  color: var(--primary-color, #345c46);
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.faq-item.active .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-resposta {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  background: #f6f9f7;
+  border-top: 0 solid transparent;
+}
+
+.faq-item.active .faq-resposta {
+  max-height: 320px;
+  border-top: 1px solid #e3ebe6;
+}
+
+.faq-resposta-inner {
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.faq-conteudo-resposta strong {
+  display: block;
+  color: var(--primary-color, #345c46);
+  font-size: calc(0.88rem * var(--font-scale, 1));
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.faq-conteudo-resposta p {
+  color: #3a4740;
+  font-size: calc(0.94rem * var(--font-scale, 1));
+  line-height: 1.55;
+}
+
+/* Dark Mode */
+body.dark-mode .faq-container {
+  background: #2c2c2c;
+  border-color: #4a5c4e;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .faq-badge {
+  background: rgba(123, 196, 155, 0.16);
+  color: #7bc49b;
+}
+
+body.dark-mode .faq-container h2 {
+  color: #7bc49b;
+}
+
+body.dark-mode .faq-intro {
+  color: #d8ddd9;
+}
+
+body.dark-mode .faq-item {
+  background: #364546;
+  border-color: #4f6364;
+}
+
+body.dark-mode .faq-item:hover,
+body.dark-mode .faq-item.active {
+  border-color: #7bc49b;
+}
+
+body.dark-mode .faq-pergunta {
+  color: #ffffff;
+}
+
+body.dark-mode .faq-pergunta:hover {
+  background: #3f5152;
+}
+
+body.dark-mode .faq-avatar.paciente {
+  background: rgba(232, 200, 137, 0.22);
+  color: #e8c889;
+}
+
+body.dark-mode .faq-chevron {
+  color: #7bc49b;
+}
+
+body.dark-mode .faq-resposta {
+  background: #293536;
+}
+
+body.dark-mode .faq-item.active .faq-resposta {
+  border-top-color: #4a5c4e;
+}
+
+body.dark-mode .faq-conteudo-resposta strong {
+  color: #7bc49b;
+}
+
+body.dark-mode .faq-conteudo-resposta p {
+  color: #f1f5f2;
+}
+
+  body.dark-mode .faq-pergunta .icon-paciente {
+    background: #1a2627;
+    color: #7bc49b;
+  }
+
+  .faq-resposta {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #4a5568;
+    font-size: calc(0.95rem * var(--font-scale));
+    padding-left: clamp(0px, 1vw, 8px);
+  }
+
+  body.dark-mode .faq-resposta {
+    color: #e2e8f0;
+  }
+
+  .faq-resposta .icon-medico {
+    font-size: 1.2rem;
+    color: #e8c889;
+    background: #345c46;
+    padding: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  body.dark-mode .faq-resposta .icon-medico {
+    background: #1a2627;
+    color: #e8c889;
+  }
+
+  .faq-resposta strong {
+    display: block;
+    color: #345c46;
+    margin-bottom: 4px;
+  }
+
+  body.dark-mode .faq-resposta strong {
+    color: #7bc49b;
+  }
+
+  /* Rodapé */
+  footer {
+    border-top: 25px solid #3a4d4ee6;
+    background-color: #3a4d4ee6;
+    color: white;
+    text-align: center;
+    padding: clamp(16px, 3vw, 20px);
+    margin-top: 50px;
+  }
+
+  footer p {
+    margin: 5px 0;
+    font-size: calc(0.9rem * var(--font-scale));
+  }
+
+  /* Menu de Acessibilidade Flutuante */
+  #acessibilidade-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #2e5a44;
+    border: 3px solid #feffe0;
+    border-radius: 50%;
+    width: clamp(52px, 6vw, 65px);
+    height: clamp(52px, 6vw, 65px);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  #acessibilidade-btn:hover {
+    transform: scale(1.1);
+    background: #345c46;
+  }
+
+  #acessibilidade-btn i {
+    font-size: clamp(22px, 3vw, 28px);
+    color: #feffe0;
+  }
+
+  #menu-acessibilidade {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(360px, 100%);
+    height: 100%;
+    background: #ffffff;
+    color: #2d3748;
+    box-shadow: -8px 0 25px rgba(0,0,0,0.25);
+    padding: 25px;
+    transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2001;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  body.dark-mode #menu-acessibilidade {
+    background: #252525;
+    color: #f1f1f1;
+  }
+
+  #menu-acessibilidade.active {
+    right: 0;
+  }
+
+  .acessibilidade-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 12px;
+  }
+
+  body.dark-mode .acessibilidade-header {
+    border-bottom-color: #3d3d3d;
+  }
+
+  #menu-acessibilidade h3 {
+    color: #345c46;
+    font-size: calc(1.25rem * var(--font-scale));
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  body.dark-mode #menu-acessibilidade h3 {
+    color: #7bc49b;
+  }
+
+  .btn-fechar-acessibilidade {
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #718096;
+    transition: color 0.2s;
+  }
+
+  .btn-fechar-acessibilidade:hover {
+    color: #e53e3e;
+  }
+
+  .acessibilidade-secao {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .acessibilidade-secao span {
+    font-size: calc(0.85rem * var(--font-scale));
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #718096;
+  }
+
+  .acessibilidade-grid-botoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  #menu-acessibilidade button.acc-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 8px;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #f7fafc;
+    color: #2d3748;
+    font-size: calc(0.85rem * var(--font-scale));
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  body.dark-mode #menu-acessibilidade button.acc-action {
+    background: #323232;
+    border-color: #4a4a4a;
+    color: #e2e8f0;
+  }
+
+  #menu-acessibilidade button.acc-action i {
+    font-size: 1.2rem;
+    color: #345c46;
+  }
+
+  body.dark-mode #menu-acessibilidade button.acc-action i {
+    color: #7bc49b;
+  }
+
+  #menu-acessibilidade button.acc-action:hover {
+    background: #345c46;
+    color: white;
+    border-color: #345c46;
+  }
+
+  #menu-acessibilidade button.acc-action.ativo {
+    background: #2b4c39;
+    color: white;
+    border-color: #2b4c39;
+  }
+
+  #menu-acessibilidade .reset-full {
+    background: #fff5f5;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+    margin-top: 5px;
+    font-size: calc(0.9rem * var(--font-scale));
+  }
+
+  #menu-acessibilidade .reset-full:hover {
+    background: #fed7d7;
+  }
+
+  /* Estados de Acessibilidade no Body */
+  body.tema-invertido { filter: invert(100%) hue-rotate(180deg); }
+  body.tema-mono { filter: grayscale(100%); }
+  body.espaco-mais { letter-spacing: 1.8px !important; line-height: 1.9 !important; }
+  body.espaco-menos { letter-spacing: -0.4px !important; line-height: 1.25 !important; }
+
+  body.links-realçados a {
+    background: yellow !important;
+    color: black !important;
+    padding: 3px 6px;
+    border-radius: 4px;
+    outline: 2px solid black;
+    font-weight: bold;
+  }
+
+  body.sem-animacoes *, body.sem-animacoes *::before, body.sem-animacoes *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+</style>
 </head>
 <body>
 
+<header>
+  <nav aria-label="Navegação Principal">
+    <img src="imagens/logocolorida.png" alt="Logo do Sistema Básico de Saúde" onerror="this.src='https://placehold.co/150x50/345c46/feffe0?text=SBS'">
+    
+    <div class="links">
+      <a href="telainicio.html"><i class="fas fa-home" aria-hidden="true"></i> Início</a>
+      <a href="agendamento.html"><i class="fa fa-calendar" aria-hidden="true"></i> Agendamento</a>
+      <a href="servidor.html"><i class="fas fa-phone" aria-hidden="true"></i> Servidor</a>
+      <a href="consultas.html"><i class="fas fa-stethoscope"></i> Consultas</a>
+      <a href="exames.html"><i class="fas fa-vials"></i> Exames</a>
+      <a href="vacinacao.html"><i class="fas fa-syringe"></i> Vacinação</a>
+    </div>
 
+    <div class="search-container">
+      <i class="fas fa-search" aria-hidden="true"></i>
+      <input type="text" placeholder="Pesquisar no site" aria-label="Pesquisar no site">
+    </div>
 
-<nav>
-   <img src="imagens/logocolorida.png" class="nav">
-  <a href="telainicio.html"><i class="fas fa-home"></i> Início</a>
-  <a href="consultas.html"><i class="fas fa-stethoscope"></i> Consultas</a>
-  <a href="exames.html"><i class="fas fa-vials"></i> Exames</a>
-  <a href="vacinacao.html"><i class="fas fa-syringe"></i> Vacinação</a>
+    <div>
+      <a href="cadastro.html" class="btn-cadastro" id="btnAcesso">
+        <i class="fas fa-user" aria-hidden="true"></i> Entrar / Cadastrar
+      </a>
 
-  <div>
-    <button class="btn-darkmode" id="toggleDarkMode">
-      <i class="fas fa-moon"></i> Modo Escuro
-    </button>
+      <div class="user-dropdown" id="areaUsuario" style="display: none;">
+        <button class="dropdown-btn" id="dropdownBtn" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-user-circle" aria-hidden="true"></i> 
+          <span id="nomeUsuarioTexto">Usuário</span> 
+          <i class="fas fa-chevron-down arrow-icon" aria-hidden="true"></i>
+        </button>
+        
+        <div class="dropdown-content" id="dropdownContent">
+          <a href="perfil.html"><i class="fas fa-id-card" aria-hidden="true"></i> Meu Perfil</a>
+          <hr>
+          <a href="#" onclick="sairDaConta(); return false;"><i class="fas fa-sign-out-alt" aria-hidden="true"></i> Sair</a>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <button class="btn-darkmode" id="toggleDarkMode" aria-label="Alternar modo escuro geral">
+      <i class="fas fa-moon" id="iconDarkMode" aria-hidden="true"></i> 
+       <span id="textDarkMode">Modo Escuro</span>
+</button>
+    </div>
+  </nav>
+</header>
+
+<!-- BOTÃO DE ACESSIBILIDADE FLUTUANTE -->
+<button id="acessibilidade-btn" aria-label="Abrir menu de acessibilidade" aria-expanded="false" accesskey="a">
+  <i class="fas fa-universal-access" aria-hidden="true"></i>
+</button>
+
+<!-- PAINEL DE ACESSIBILIDADE -->
+<aside id="menu-acessibilidade" aria-label="Menu de Acessibilidade">
+  <div class="acessibilidade-header">
+    <h3><i class="fas fa-universal-access"></i> Acessibilidade</h3>
+    <button class="btn-fechar-acessibilidade" id="btn-fechar-acc" aria-label="Fechar menu">&times;</button>
   </div>
-</nav>
+  
+  <div class="acessibilidade-secao">
+    <span>Contraste</span>
+    <div class="acessibilidade-grid-botoes">
+      <button id="btn-contraste-invertido" class="acc-action" accesskey="i">
+        <i class="fas fa-adjust"></i> Invertido (ALT+i)
+      </button>
+      <button id="btn-contraste-mono" class="acc-action" accesskey="m">
+        <i class="fas fa-eye-slash"></i> Monocromático (ALT+m)
+      </button>
+    </div>
+  </div>
 
-<main>
-<h2>Especialistas disponíveis</h2>
-<div class="dias-semana">
+  <div class="acessibilidade-secao">
+    <span>Tamanho da Fonte</span>
+    <div class="acessibilidade-grid-botoes">
+      <button id="btn-aumenta-fonte" class="acc-action" accesskey="+">
+        <i class="fas fa-search-plus"></i> Aumentar (ALT++)
+      </button>
+      <button id="btn-diminui-fonte" class="acc-action" accesskey="-">
+        <i class="fas fa-search-minus"></i> Diminuir (ALT+-)
+      </button>
+    </div>
+  </div>
+
+  <div class="acessibilidade-secao">
+    <span>Espaçamento</span>
+    <div class="acessibilidade-grid-botoes">
+      <button id="btn-espaco-mais" class="acc-action" accesskey="3">
+        <i class="fas fa-text-width"></i> Expandir (ALT+3)
+      </button>
+      <button id="btn-espaco-menos" class="acc-action" accesskey="4">
+        <i class="fas fa-text-height"></i> Reduzir (ALT+4)
+      </button>
+    </div>
+  </div>
+
+  <div class="acessibilidade-secao">
+    <span>Navegação e Leitura</span>
+    <div class="acessibilidade-grid-botoes">
+      <button id="btn-leitor" class="acc-action" accesskey="l">
+        <i class="fas fa-volume-up"></i> Leitor (ALT+l)
+      </button>
+      <button id="btn-links" class="acc-action" accesskey="7">
+        <i class="fas fa-link"></i> Destacar Links (ALT+7)
+      </button>
+      <button id="btn-animacoes" class="acc-action" style="grid-column: span 2;" accesskey="6">
+        <i class="fas fa-bolt"></i> Pausar / Ligar Animações (ALT+6)
+      </button>
+    </div>
+  </div>
+
+  <button id="btn-reset" class="reset-full" accesskey="0">
+    <i class="fas fa-undo"></i> Restaurar Padrões (ALT+0)
+  </button>
+</aside>
+
+<section class="vacinacao">
+  <h2>Qual nosso Objetivo?</h2>
+  <p>A importância da consulta médica está <br>
+    diretamente relacionada à capacidade de prevenir, <br>
+    detectar e tratar problemas de forma eficiente. <br>
+    Em muitos casos, doenças como hipertensão, diabetes, <br>
+    dislipidemias e outras condições evoluem de forma silenciosa.</p>
+</section>
+
+<main id="conteudo-principal">
+  <h2>Especialistas disponíveis</h2>
+   <p>Clique sobre o botão do dia escolhido para visualizar o especialista.</p>
+  <div class="dias-semana">
     <button class="btn" onclick="mostrarEspecialistas('segunda')">Segunda-feira</button>
     <button class="btn" onclick="mostrarEspecialistas('terca')">Terça-feira</button>
     <button class="btn" onclick="mostrarEspecialistas('quarta')">Quarta-feira</button>
@@ -502,180 +1251,509 @@ body.dark-mode .vacinacao p {
     <button class="btn" onclick="mostrarEspecialistas('sexta')">Sexta-feira</button>
   </div>
 
-
-<div id="segunda" class="servicos">
-  <div class="servico">
-    <i class="fa-solid fa-user-md"></i>
-    <h3>Clínico Geral</h3>
-    <p>Atendimento básico e encaminhamentos.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Clínico Geral')">Agendar</button>
+  <div id="segunda" class="servicos">
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-user-md" aria-hidden="true"></i>
+        <h3>Clínico Geral</h3>
+        <p>Atendimento básico e encaminhamentos.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Clínico Geral')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-heart-pulse" aria-hidden="true"></i>
+        <h3>Cardiologia</h3>
+        <p>Saúde do coração e exames cardiológicos.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Cardiologia')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-eye" aria-hidden="true"></i>
+        <h3>Oftalmologia</h3>
+        <p>Exames de visão e tratamento ocular.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Oftalmologia')">Agendar</button>
+    </div>
   </div>
-  <div class="servico">
-    <i class="fa-solid fa-heart-pulse"></i>
-    <h3>Cardiologia</h3>
-    <p>Saúde do coração e exames cardiológicos.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Cardiologia')">Agendar</button>
+
+  <div id="terca" class="servicos">
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-bone" aria-hidden="true"></i>
+        <h3>Ortopedia</h3>
+        <p>Tratamento de ossos, músculos e articulações.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Ortopedia')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-brain" aria-hidden="true"></i>
+        <h3>Neurologia</h3>
+        <p>Diagnóstico e tratamento de doenças neurológicas.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Neurologia')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-lungs" aria-hidden="true"></i>
+        <h3>Pneumologia</h3>
+        <p>Cuidados com o sistema respiratório.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Pneumologia')">Agendar</button>
+    </div>
   </div>
-  <div class="servico">
-    <i class="fa-solid fa-eye"></i>
-    <h3>Oftalmologia</h3>
-    <p>Exames de visão e tratamento ocular.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Oftalmologia')">Agendar</button>
+
+  <div id="quarta" class="servicos">
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-child" aria-hidden="true"></i>
+        <h3>Pediatria</h3>
+        <p>Atendimento especializado para crianças.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Pediatria')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-person-dress" aria-hidden="true"></i>
+        <h3>Ginecologia</h3>
+        <p>Saúde da mulher e acompanhamento ginecológico.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Ginecologia')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-user-nurse" aria-hidden="true"></i>
+        <h3>Dermatologia</h3>
+        <p>Tratamento de pele e doenças dermatológicas.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Dermatologia')">Agendar</button>
+    </div>
   </div>
-</div>
 
-
-<div id="terca" class="servicos">
-  <div class="servico">
-    <i class="fa-solid fa-bone"></i>
-    <h3>Ortopedia</h3>
-    <p>Tratamento de ossos, músculos e articulações.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Ortopedia')">Agendar</button>
+  <div id="quinta" class="servicos">
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-dna" aria-hidden="true"></i>
+        <h3>Endocrinologia</h3>
+        <p>Tratamento de hormônios e metabolismo.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Endocrinologia')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-bowl-food" aria-hidden="true"></i>
+        <h3>Gastroenterologia</h3>
+        <p>Saúde do sistema digestivo.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Gastroenterologia')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-ear-listen" aria-hidden="true"></i>
+        <h3>Otorrinolaringologia</h3>
+        <p>Tratamento de ouvido, nariz e garganta.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Otorrinolaringologia')">Agendar</button>
+    </div>
   </div>
-  <div class="servico">
-    <i class="fa-solid fa-brain"></i>
-    <h3>Neurologia</h3>
-    <p>Diagnóstico e tratamento de doenças neurológicas.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Neurologia')">Agendar</button>
+
+  <div id="sexta" class="servicos">
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-ribbon" aria-hidden="true"></i>
+        <h3>Oncologia</h3>
+        <p>Tratamento e acompanhamento de câncer.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Oncologia')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-brain" aria-hidden="true"></i>
+        <h3>Psiquiatria</h3>
+        <p>Saúde mental e acompanhamento psicológico.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Psiquiatria')">Agendar</button>
+    </div>
+    <div class="servico">
+      <div>
+        <i class="fa-solid fa-syringe" aria-hidden="true"></i>
+        <h3>Imunologia</h3>
+        <p>Tratamento de alergias e sistema imunológico.</p>
+      </div>
+      <button type="button" class="btn" onclick="agendarConsulta('Imunologia')">Agendar</button>
+    </div>
   </div>
-  <div class="servico">
-    <i class="fa-solid fa-lungs"></i>
-    <h3>Pneumologia</h3>
-    <p>Cuidados com o sistema respiratório.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Pneumologia')">Agendar</button>
+
+<section class="faq-container" aria-label="Perguntas frequentes">
+  <div class="faq-header">
+    <span class="faq-badge"><i class="fas fa-notes-medical"></i> Orientação Preventiva</span>
+    <h2>Perguntas frequentes sobre a consulta médica</h2>
+    <p class="faq-intro">Entenda por que o acompanhamento de rotina evita que doenças silenciosas evoluam sem sintomas.</p>
   </div>
-</div>
 
+  <div class="faq-list">
+    <!-- Pergunta 1 -->
+    <div class="faq-item active">
+      <button type="button" class="faq-pergunta" onclick="toggleFaq(this)" aria-expanded="true">
+        <span class="faq-avatar paciente"><i class="fas fa-user"></i></span>
+        <span class="faq-texto-pergunta">"Doutor, eu me sinto super bem e não sinto nada. Preciso mesmo fazer exames de rotina?"</span>
+        <i class="fas fa-chevron-down faq-chevron"></i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <span class="faq-avatar medico"><i class="fas fa-user-md"></i></span>
+          <div class="faq-conteudo-resposta">
+            <strong>Resposta do Médico</strong>
+            <p>Sim, é fundamental. Doenças como hipertensão e diabetes não apresentam sintomas nos estágios iniciais. O check-up serve exatamente para identificar alterações antes que o problema evolua.</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<div id="quarta" class="servicos">
-  <div class="servico">
-    <i class="fa-solid fa-child"></i>
-    <h3>Pediatria</h3>
-    <p>Atendimento especializado para crianças.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Pediatria')">Agendar</button>
+    <!-- Pergunta 2 -->
+    <div class="faq-item">
+      <button type="button" class="faq-pergunta" onclick="toggleFaq(this)" aria-expanded="false">
+        <span class="faq-avatar paciente"><i class="fas fa-user"></i></span>
+        <span class="faq-texto-pergunta">"Com que frequência eu devo ir ao médico se estiver saudável?"</span>
+        <i class="fas fa-chevron-down faq-chevron"></i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <span class="faq-avatar medico"><i class="fas fa-user-md"></i></span>
+          <div class="faq-conteudo-resposta">
+            <strong>Resposta do Médico</strong>
+            <p>Recomendamos uma avaliação preventiva anual. Caso haja histórico familiar de doenças crônicas, essa frequência pode ser ajustada individualmente pela equipe de saúde.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pergunta 3 -->
+    <div class="faq-item">
+      <button type="button" class="faq-pergunta" onclick="toggleFaq(this)" aria-expanded="false">
+        <span class="faq-avatar paciente"><i class="fas fa-user"></i></span>
+        <span class="faq-texto-pergunta">"Quais exames básicos não podem faltar no meu check-up anual?"</span>
+        <i class="fas fa-chevron-down faq-chevron"></i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <span class="faq-avatar medico"><i class="fas fa-user-md"></i></span>
+          <div class="faq-conteudo-resposta">
+            <strong>Resposta do Médico</strong>
+            <p>Normalmente solicitamos hemograma completo, glicemia, perfil lipídico, função renal e exames preventivos específicos conforme a faixa etária e o histórico de cada paciente.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="servico">
-    <i class="fa-solid fa-person-dress"></i>
-    <h3>Ginecologia</h3>
-    <p>Saúde da mulher e acompanhamento ginecológico.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Ginecologia')">Agendar</button>
+</section>
   </div>
-  <div class="servico">
-    <i class="fa-solid fa-user-nurse"></i>
-    <h3>Dermatologia</h3>
-    <p>Tratamento de pele e doenças dermatológicas.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Dermatologia')">Agendar</button>
+
+  <div id="modalAgendamento" class="modal" role="dialog" aria-labelledby="especialidadeSelecionada">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModal()">&times;</span>
+      <h2>Agendamento de Consulta</h2>
+      <p id="especialidadeSelecionada"></p>
+
+      <label for="nomePaciente">Nome:</label>
+      <input type="text" placeholder="Digite seu nome" id="nomePaciente">
+
+      <label for="dataConsulta">Data:</label>
+      <input type="date" id="dataConsulta">
+
+      <label for="horaConsulta">Horário (08h às 16h):</label>
+      <input id="horaConsulta" type="time" min="08:00" max="16:00" step="1800" required>
+
+      <button type="button" class="btn" style="width: 100%; margin-top: 20px;" onclick="confirmarAgendamento()">Confirmar Agendamento</button>
+    </div>
   </div>
-</div>
+</main>
 
 
-<div id="quinta" class="servicos">
-  <div class="servico">
-    <i class="fa-solid fa-dna"></i>
-    <h3>Endocrinologia</h3>
-    <p>Tratamento de hormônios e metabolismo.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Endocrinologia')">Agendar</button>
-  </div>
-  <div class="servico">
-  <i class="fa-solid fa-bowl-food"></i>
-    <h3>Gastroenterologia</h3>
-    <p>Saúde do sistema digestivo.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Gastroenterologia')">Agendar</button>
-  </div>
-  <div class="servico">
-    <i class="fa-solid fa-ear-listen"></i>
-    <h3>Otorrinolaringologia</h3>
-    <p>Tratamento de ouvido, nariz e garganta.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Otorrinolaringologia')">Agendar</button>
-  </div>
-</div>
-
-
-<div id="sexta" class="servicos">
-  <div class="servico">
-    <i class="fa-solid fa-ribbon"></i>
-    <h3>Oncologia</h3>
-    <p>Tratamento e acompanhamento de câncer.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Oncologia')">Agendar</button>
-  </div>
-  <div class="servico">
-    <i class="fa-solid fa-brain"></i>
-    <h3>Psiquiatria</h3>
-    <p>Saúde mental e acompanhamento psicológico.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Psiquiatria')">Agendar</button>
-  </div>
-  <div class="servico">
-    <i class="fa-solid fa-syringe"></i>
-    <h3>Imunologia</h3>
-    <p>Tratamento de alergias e sistema imunológico.</p>
-    <button type="button" class="btn" onclick="agendarConsulta('Imunologia')">Agendar</button>
-  </div>
-</div>
-
-
-<div id="modalAgendamento" class="modal" role="dialog" aria-labelledby="especialidadeSelecionada">
-  <div class="card-azul modal-content">
-    <span class="close" onclick="fecharModal()">&times;</span>
-    <h2>Agendamento de Consulta</h2>
-    <p id="especialidadeSelecionada"></p>
-
-    <label for="nomePaciente">Nome:</label><br>
-    <input type="text" placeholder="Digite seu nome" id="nomePaciente"><br><br>
-
-    <label for="dataConsulta">Data:</label><br>
-    <input type="date" id="dataConsulta"><br><br>
-
-    <label for="horaConsulta">Horário:</label><br>
-    <input id="horaConsulta" type="time" min="08:00" max="16:00" step="1800" required><br>
-    <p>Escolha um horário (somente entre 08h e 16h):</p>
-
-    <button type="button" class="btnmodal" onclick="confirmarAgendamento()">Confirmar</button>
-  </div>
-</div>
-
-<div class="vacinacao">
-  <h2>Conheça nossos especialistas</h2>
-  <p><br></p>
-</div>
-
-
-
-
+<footer>
+  
+</footer>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
 
+document.addEventListener("DOMContentLoaded", function() {
+  // 1. Oculta os serviços inicialmente
   document.querySelectorAll('.servicos').forEach(div => div.style.display = 'none');
 
+  // 2. Modo Escuro Geral
+  const isDarkMode = localStorage.getItem("darkMode") === "enabled";
+  const btnDark = document.getElementById("toggleDarkMode");
+  const iconDark = document.getElementById("iconDarkMode");
+  const textDark = document.getElementById("textDarkMode");
 
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
-  }
-
-
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-  const nomeUsuario = usuarioLogado ? usuarioLogado.nome : localStorage.getItem("usuarioNome");
-
-
-  if (nomeUsuario) {
-    const elNome = document.getElementById("nomePaciente");
-    if (elNome) {
-      elNome.value = nomeUsuario;
+  function atualizarBotaoDarkMode(ativado) {
+    if (ativado) {
+      if (iconDark) iconDark.className = "fas fa-sun";
+      if (textDark) textDark.textContent = "Modo Claro";
+    } else {
+      if (iconDark) iconDark.className = "fas fa-moon";
+      if (textDark) textDark.textContent = "Modo Escuro";
     }
   }
+
+  if (isDarkMode) {
+    document.body.classList.add("dark-mode");
+    atualizarBotaoDarkMode(true);
+  } else {
+    atualizarBotaoDarkMode(false);
+  }
+
+  if (btnDark) {
+    btnDark.addEventListener("click", function() {
+      document.body.classList.toggle("dark-mode");
+      const ativado = document.body.classList.contains("dark-mode");
+
+      if (ativado) {
+        localStorage.setItem("darkMode", "enabled");
+        atualizarBotaoDarkMode(true);
+      } else {
+        localStorage.setItem("darkMode", "disabled");
+        atualizarBotaoDarkMode(false);
+      }
+    });
+  }
+
+  // 3. Preenche nome do usuário se houver cadastro
+  function obterNomeUsuario() {
+    const raw = localStorage.getItem("usuarioLogado") || localStorage.getItem("usuarioNome");
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw);
+      if (typeof parsed === 'object' && parsed !== null) {
+        return parsed.nome || parsed.usuario || "Usuário";
+      }
+    } catch(e) {}
+    return raw;
+  }
+
+  const nomeUsuario = obterNomeUsuario();
+  const btnAcesso = document.getElementById("btnAcesso");
+  const areaUsuario = document.getElementById("areaUsuario");
+  const nomeUsuarioTexto = document.getElementById("nomeUsuarioTexto");
+
+  if (nomeUsuario) {
+    if (btnAcesso) btnAcesso.style.display = "none";
+    if (areaUsuario) areaUsuario.style.display = "inline-block";
+    const primeiroNome = String(nomeUsuario).split(" ")[0];
+    if (nomeUsuarioTexto) nomeUsuarioTexto.textContent = primeiroNome;
+  } else {
+    if (btnAcesso) btnAcesso.style.display = "inline-block";
+    if (areaUsuario) areaUsuario.style.display = "none";
+  }
+
+  const dropdownBtn = document.getElementById("dropdownBtn");
+  const areaDropdown = document.getElementById("areaUsuario");
+
+  if (dropdownBtn) {
+    dropdownBtn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      const isActive = areaDropdown.classList.toggle("active");
+      dropdownBtn.setAttribute("aria-expanded", isActive);
+    });
+  }
+
+  document.addEventListener("click", function(e) {
+    if (areaDropdown && !areaDropdown.contains(e.target)) {
+      areaDropdown.classList.remove("active");
+      if (dropdownBtn) dropdownBtn.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  // 4. Define a data mínima do input de consulta como hoje
+  const elData = document.getElementById("dataConsulta");
+  if (elData) {
+    const hojeLocal = new Date();
+    const ano = hojeLocal.getFullYear();
+    const mes = String(hojeLocal.getMonth() + 1).padStart(2, '0');
+    const dia = String(hojeLocal.getDate()).padStart(2, '0');
+    const dataFormatada = `${ano}-${mes}-${dia}`;
+    elData.value = dataFormatada;
+    elData.min = dataFormatada;
+  }
+
+  if (typeof carregarConsultas === "function") carregarConsultas();
+
+  // 5. SCRIPTS DO MENU DE ACESSIBILIDADE E ZOOM
+  const btnMenu = document.getElementById("acessibilidade-btn");
+  const btnFecharAcc = document.getElementById("btn-fechar-acc");
+  const menu = document.getElementById("menu-acessibilidade");
+
+  if (btnMenu && menu) {
+    btnMenu.addEventListener("click", () => {
+      const isActive = menu.classList.toggle("active");
+      btnMenu.setAttribute("aria-expanded", isActive);
+    });
+  }
+
+  if (btnFecharAcc && menu) {
+    btnFecharAcc.addEventListener("click", () => {
+      menu.classList.remove("active");
+      if (btnMenu) btnMenu.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  let currentScale = parseFloat(localStorage.getItem("fontScale")) || 1;
+  if (currentScale !== 1) {
+    document.documentElement.style.setProperty('--font-scale', currentScale);
+  }
+
+  const btnAf = document.getElementById("btn-aumenta-fonte");
+  if (btnAf) {
+    btnAf.onclick = () => {
+      if (currentScale < 1.5) {
+        currentScale = Math.round((currentScale + 0.1) * 10) / 10;
+        document.documentElement.style.setProperty('--font-scale', currentScale);
+        localStorage.setItem("fontScale", currentScale);
+      }
+    };
+  }
+
+  const btnDf = document.getElementById("btn-diminui-fonte");
+  if (btnDf) {
+    btnDf.onclick = () => {
+      if (currentScale > 0.8) {
+        currentScale = Math.round((currentScale - 0.1) * 10) / 10;
+        document.documentElement.style.setProperty('--font-scale', currentScale);
+        localStorage.setItem("fontScale", currentScale);
+      }
+    };
+  }
+
+  const contrastModes = ["tema-invertido", "tema-mono"];
+  function setMode(mode) {
+    contrastModes.forEach(m => document.body.classList.remove(m));
+    if (!document.body.classList.contains(mode)) {
+      document.body.classList.add(mode);
+    }
+    salvarClassesAcessibilidade();
+  }
+
+  const btnCI = document.getElementById("btn-contraste-invertido");
+  if (btnCI) btnCI.onclick = () => setMode("tema-invertido");
+
+  const btnCM = document.getElementById("btn-contraste-mono");
+  if (btnCM) btnCM.onclick = () => setMode("tema-mono");
+
+  const btnEm = document.getElementById("btn-espaco-mais");
+  if (btnEm) {
+    btnEm.onclick = () => {
+      document.body.classList.remove("espaco-menos");
+      document.body.classList.toggle("espaco-mais");
+      salvarClassesAcessibilidade();
+    };
+  }
+
+  const btnEmen = document.getElementById("btn-espaco-menos");
+  if (btnEmen) {
+    btnEmen.onclick = () => {
+      document.body.classList.remove("espaco-mais");
+      document.body.classList.toggle("espaco-menos");
+      salvarClassesAcessibilidade();
+    };
+  }
+
+  const leitorBtn = document.getElementById("btn-leitor");
+  let leitorAtivo = false;
+  if (leitorBtn) {
+    leitorBtn.onclick = () => {
+      const mainContent = document.getElementById("conteudo-principal") || document.body;
+      if (!leitorAtivo) {
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(mainContent.innerText);
+          utterance.lang = 'pt-BR';
+          speechSynthesis.speak(utterance);
+          leitorBtn.classList.add("ativo");
+          leitorAtivo = true;
+        } else {
+          alert("Seu navegador não suporta leitura de tela nativa.");
+        }
+      } else {
+        speechSynthesis.cancel();
+        leitorBtn.classList.remove("ativo");
+        leitorAtivo = false;
+      }
+    };
+  }
+
+  const animBtn = document.getElementById("btn-animacoes");
+  if (animBtn) {
+    animBtn.onclick = () => {
+      document.body.classList.toggle("sem-animacoes");
+      salvarClassesAcessibilidade();
+    };
+  }
+
+  const linksBtn = document.getElementById("btn-links");
+  if (linksBtn) {
+    linksBtn.onclick = () => {
+      document.body.classList.toggle("links-realçados");
+      salvarClassesAcessibilidade();
+    };
+  }
+
+  const btnReset = document.getElementById("btn-reset");
+  if (btnReset) {
+    btnReset.onclick = () => {
+      contrastModes.forEach(m => document.body.classList.remove(m));
+      document.body.classList.remove("espaco-mais", "espaco-menos", "links-realçados", "sem-animacoes");
+
+      currentScale = 1;
+      document.documentElement.style.setProperty('--font-scale', 1);
+
+      localStorage.removeItem("fontScale");
+      localStorage.removeItem("accessibilityClasses");
+
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
+      leitorAtivo = false;
+      atualizarEstadosBotoesAcc();
+      if (menu) menu.classList.remove("active");
+      if (btnMenu) btnMenu.setAttribute("aria-expanded", "false");
+    };
+  }
+
+  const savedClasses = JSON.parse(localStorage.getItem("accessibilityClasses"));
+  if (Array.isArray(savedClasses)) {
+    savedClasses.forEach(cls => {
+      document.body.classList.add(cls);
+    });
+  }
+
+  atualizarEstadosBotoesAcc();
 });
 
-
-
-function mostrarEspecialistas(dia) {
-  document.querySelectorAll('#segunda, #terca, #quarta, #quinta, #sexta')
-    .forEach(div => div.style.display = 'none');
-  const elementoDia = document.getElementById(dia);
-  if (elementoDia) {
-    elementoDia.style.display = 'grid';
-  }
+function salvarClassesAcessibilidade() {
+  const classesParaSalvar = [];
+  ["tema-invertido", "tema-mono", "espaco-mais", "espaco-menos", "links-realçados", "sem-animacoes"].forEach(cls => {
+    if (document.body.classList.contains(cls)) {
+      classesParaSalvar.push(cls);
+    }
+  });
+  localStorage.setItem("accessibilityClasses", JSON.stringify(classesParaSalvar));
+  if (typeof atualizarEstadosBotoesAcc === "function") atualizarEstadosBotoesAcc();
 }
 
+function atualizarEstadosBotoesAcc() {
+  const btnInv = document.getElementById("btn-contraste-invertido");
+  const btnMono = document.getElementById("btn-contraste-mono");
+  const btnEspMais = document.getElementById("btn-espaco-mais");
+  const btnEspMenos = document.getElementById("btn-espaco-menos");
+  const btnLinks = document.getElementById("btn-links");
+  const btnAnim = document.getElementById("btn-animacoes");
+
+  if (btnInv) btnInv.classList.toggle("ativo", document.body.classList.contains("tema-invertido"));
+  if (btnMono) btnMono.classList.toggle("ativo", document.body.classList.contains("tema-mono"));
+  if (btnEspMais) btnEspMais.classList.toggle("ativo", document.body.classList.contains("espaco-mais"));
+  if (btnEspMenos) btnEspMenos.classList.toggle("ativo", document.body.classList.contains("espaco-menos"));
+  if (btnLinks) btnLinks.classList.toggle("ativo", document.body.classList.contains("links-realçados"));
+  if (btnAnim) btnAnim.classList.toggle("ativo", document.body.classList.contains("sem-animacoes"));
+}
 
 const disponibilidade = {
   "Clínico Geral": ["Segunda-feira"],
@@ -695,117 +1773,262 @@ const disponibilidade = {
   "Imunologia": ["Sexta-feira"]
 };
 
-// Nomes dos dias para validação de calendário
-const nomesDias = [
-  "Domingo",
-  "Segunda-feira",
-  "Terça-feira",
-  "Quarta-feira",
-  "Quinta-feira",
-  "Sexta-feira",
-  "Sábado"
-];
+let especialidadeSelecionadaAtual = '';
 
-// 2. Evento executado assim que a página carrega
-document.addEventListener("DOMContentLoaded", function() {
-  
-  // Oculta blocos de serviços por padrão
-  document.querySelectorAll('.servicos').forEach(div => div.style.display = 'none');
+function agendarConsulta(especialidade) {
+  especialidadeSelecionadaAtual = especialidade;
 
-  // Aplica preferência do Dark Mode
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
+  const elemento = document.getElementById("especialidadeSelecionada");
+  const diasPermitidos = disponibilidade[especialidade];
+
+  if (elemento) {
+    elemento.innerText = "Especialidade: " + especialidade;
+    if (diasPermitidos) {
+      elemento.innerText += " | Atendimento: " + diasPermitidos.join(", ");
+    }
   }
 
-  // Verifica usuário logado no localStorage
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   const nomeUsuario = usuarioLogado ? usuarioLogado.nome : localStorage.getItem("usuarioNome");
+  const elNome = document.getElementById("nomePaciente");
 
-  // Atualiza campo do formulário de agendamento com o nome do paciente
-  if (nomeUsuario) {
-    const elNome = document.getElementById("nomePaciente");
-    if (elNome) {
-      elNome.value = nomeUsuario;
+  if (elNome && nomeUsuario) {
+    elNome.value = nomeUsuario;
+  }
+
+  // Configura intervalo de 30 minutos (1800 segundos) no input de hora
+  const elHora = document.getElementById("horaConsulta");
+  if (elHora) {
+    elHora.step = "1800";
+    elHora.min = "08:00";
+    elHora.max = "16:00";
+    if (!elHora.value || !horarioIntervalo30Min(elHora.value)) {
+      elHora.value = "08:00";
     }
-
-    // Atualiza a barra de navegação (exibe nome / oculta botão de login)
-    const btnAcesso = document.getElementById("btnAcesso");
-    const areaUsuario = document.getElementById("areaUsuario");
-    const nomeUsuarioTexto = document.getElementById("nomeUsuarioTexto");
-
-    if (btnAcesso) btnAcesso.style.display = "none";
-    if (areaUsuario) areaUsuario.style.display = "inline-block";
-
-    const primeiroNome = nomeUsuario.split(" ")[0];
-    if (nomeUsuarioTexto) nomeUsuarioTexto.textContent = primeiroNome;
   }
 
-  // Preenche a data de HOJE no campo de agendamento mantendo fuso local
-  const elData = document.getElementById("dataConsulta");
-  if (elData) {
-    const hojeLocal = new Date();
-    const ano = hojeLocal.getFullYear();
-    const mes = String(hojeLocal.getMonth() + 1).padStart(2, '0');
-    const dia = String(hojeLocal.getDate()).padStart(2, '0');
-    
-    const dataFormatada = `${ano}-${mes}-${dia}`;
-    elData.value = dataFormatada;
-    elData.min = dataFormatada; // Impede seleção de datas passadas
+  const modal = document.getElementById("modalAgendamento");
+  if (modal) {
+    modal.classList.add("show");
+  }
+}
+
+function horarioIntervalo30Min(horaStr) {
+  const partes = horaStr.split(":");
+  if (partes.length < 2) return false;
+  const minutos = Number(partes[1]);
+  return minutos === 0 || minutos === 30;
+}
+
+function normalizarIdentificador(txt) {
+  return String(txt || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function fecharModal() {
+  const modal = document.getElementById("modalAgendamento");
+  if (modal) {
+    modal.classList.remove("show");
+  }
+}
+
+function confirmarAgendamento() {
+  const nomePaciente = document.getElementById("nomePaciente").value.trim();
+  const dataInput = document.getElementById("dataConsulta").value;
+  const horaInput = document.getElementById("horaConsulta").value;
+
+  if (!nomePaciente) {
+    Swal.fire('Atenção', 'Por favor, insira o nome do paciente.', 'warning');
+    return;
   }
 
-  // Evento do botão Dark Mode
-  const btnDarkMode = document.getElementById("toggleDarkMode");
-  if (btnDarkMode) {
-    btnDarkMode.addEventListener("click", function() {
-      document.body.classList.toggle("dark-mode");
-      if (document.body.classList.contains("dark-mode")) {
-        localStorage.setItem("darkMode", "enabled");
-      } else {
-        localStorage.setItem("darkMode", "disabled");
-      }
-    });
+  if (!dataInput) {
+    Swal.fire('Atenção', 'Por favor, selecione a data da consulta.', 'warning');
+    return;
   }
 
-  // Evento de abrir/fechar Menu Dropdown do Usuário
-  const dropdownBtn = document.getElementById("dropdownBtn");
-  const areaDropdown = document.getElementById("areaUsuario");
-
-  if (dropdownBtn) {
-    dropdownBtn.addEventListener("click", function(e) {
-      e.stopPropagation();
-      areaDropdown.classList.toggle("active");
-    });
+  if (!horaInput) {
+    Swal.fire('Atenção', 'Por favor, selecione o horário da consulta.', 'warning');
+    return;
   }
 
-  document.addEventListener("click", function(e) {
-    if (areaDropdown && !areaDropdown.contains(e.target)) {
-      areaDropdown.classList.remove("active");
+  if (horaInput < "08:00" || horaInput > "16:00") {
+    Swal.fire('Horário Inválido', 'O atendimento ocorre apenas entre 08h e 16h.', 'error');
+    return;
+  }
+
+  if (!horarioIntervalo30Min(horaInput)) {
+    Swal.fire(
+      'Intervalo Inválido',
+      'As consultas só podem ser agendadas de 30 em 30 minutos (ex.: 08:00, 08:30, 09:00).',
+      'warning'
+    );
+    return;
+  }
+
+  const hoje = new Date();
+  const anoAtual = hoje.getFullYear();
+  const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
+  const diaAtual = String(hoje.getDate()).padStart(2, '0');
+  const dataHojeStr = `${anoAtual}-${mesAtual}-${diaAtual}`;
+
+  if (dataInput === dataHojeStr) {
+    const horaAtual = String(hoje.getHours()).padStart(2, '0');
+    const minutoAtual = String(hoje.getMinutes()).padStart(2, '0');
+    const horarioAtualStr = `${horaAtual}:${minutoAtual}`;
+
+    if (horaInput < horarioAtualStr) {
+      Swal.fire('Horário Inválido', 'Você não pode agendar um horário que já passou.', 'error');
+      return;
     }
+  }
+
+  const [ano, mes, dia] = dataInput.split('-').map(Number);
+  const dataObj = new Date(ano, mes - 1, dia);
+
+  const diasSemanaMap = [
+    "Domingo",
+    "Segunda-feira",
+    "Terça-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sábado"
+  ];
+
+  const diaDaSemanaEscolhido = diasSemanaMap[dataObj.getDay()];
+  const diasPermitidos = disponibilidade[especialidadeSelecionadaAtual];
+
+  if (diasPermitidos && !diasPermitidos.includes(diaDaSemanaEscolhido)) {
+    Swal.fire({
+      title: 'Data Incompatível',
+      text: `A especialidade ${especialidadeSelecionadaAtual} atende apenas nos seguintes dias: ${diasPermitidos.join(', ')}.`,
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+    return;
+  }
+
+  const dataFormatadaExibicao = dataInput.split('-').reverse().join('/');
+  const consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+
+  let usuarioSessao = {};
+  try {
+    const rawUsuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+    if (rawUsuario && typeof rawUsuario === "object") usuarioSessao = rawUsuario;
+  } catch (e) {}
+
+  const emailPaciente = String(usuarioSessao.email || localStorage.getItem("usuarioEmail") || "").trim();
+  const cpfPaciente = String(usuarioSessao.cpf || localStorage.getItem("usuarioCpf") || "").replace(/\D/g, "");
+  const nomeNorm = normalizarIdentificador(nomePaciente);
+  const emailNorm = normalizarIdentificador(emailPaciente);
+  const espNorm = normalizarIdentificador(especialidadeSelecionadaAtual);
+
+  // 1. Impede marcar exatamente no mesmo dia, especialidade e horário já ocupado
+  const horarioJaOcupado = consultas.some(c =>
+    c.status !== "Cancelada" &&
+    c.data === dataFormatadaExibicao &&
+    c.hora === horaInput &&
+    normalizarIdentificador(c.especialidade) === espNorm
+  );
+
+  if (horarioJaOcupado) {
+    Swal.fire({
+      title: 'Horário Indisponível',
+      text: `O horário das ${horaInput} em ${especialidadeSelecionadaAtual} já está ocupado no dia ${dataFormatadaExibicao}. Escolha outro horário.`,
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+    return;
+  }
+
+  // 2. Impede que a mesma pessoa marque duas consultas da mesma especialidade no mesmo dia
+  const mesmaPessoaMesmaEspecialidadeNoDia = consultas.some(c => {
+    if (c.status === "Cancelada") return false;
+    if (c.data !== dataFormatadaExibicao) return false;
+    if (normalizarIdentificador(c.especialidade) !== espNorm) return false;
+
+    const mesmoEmail = emailNorm && normalizarIdentificador(c.email) === emailNorm;
+    const mesmoCpf = cpfPaciente.length === 11 && String(c.cpf || "").replace(/\D/g, "") === cpfPaciente;
+    const mesmoNome = nomeNorm && normalizarIdentificador(c.nome) === nomeNorm;
+
+    return mesmoEmail || mesmoCpf || mesmoNome;
   });
-});
 
-// 3. Funções de Interface
+  if (mesmaPessoaMesmaEspecialidadeNoDia) {
+    Swal.fire({
+      title: 'Consulta Já Agendada',
+      text: `${nomePaciente} já possui consulta de ${especialidadeSelecionadaAtual} marcada para o dia ${dataFormatadaExibicao}.`,
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+    return;
+  }
+
+  const novaConsulta = {
+    nome: nomePaciente,
+    email: emailPaciente,
+    cpf: cpfPaciente,
+    especialidade: especialidadeSelecionadaAtual,
+    data: dataFormatadaExibicao,
+    hora: horaInput,
+    status: "Pendente",
+    confirmada: false,
+    dataCriacao: new Date().toISOString()
+  };
+
+  consultas.push(novaConsulta);
+  localStorage.setItem("consultas", JSON.stringify(consultas));
+
+  Swal.fire({
+    title: 'Sucesso!',
+    text: `Consulta de ${especialidadeSelecionadaAtual} agendada para ${dataFormatadaExibicao} às ${horaInput}.`,
+    icon: 'success',
+    confirmButtonText: 'OK'
+  }).then(() => {
+    fecharModal();
+    if (typeof carregarConsultas === "function") carregarConsultas();
+  });
+}
+
+function carregarConsultas() {
+  const lista = document.getElementById("listaConsultas");
+  if (!lista) return;
+
+  const consultas = JSON.parse(localStorage.getItem("consultas")) || [];
+
+  if (consultas.length === 0) {
+    lista.innerHTML = "<p>Nenhuma consulta encontrada.</p>";
+    return;
+  }
+
+  lista.innerHTML = "";
+  consultas.forEach((c, index) => {
+    const isCancelada = c.status === "Cancelada";
+    const statusTexto = isCancelada ? " Cancelada" : (c.confirmada ? "✔ Confirmada" : "⏳ Pendente");
+
+    const div = document.createElement("div");
+    div.className = "consulta";
+    div.innerHTML = `
+      <strong>${c.nome}</strong><br>
+      Especialidade: ${c.especialidade}<br>
+      Data: ${c.data} às ${c.hora}<br>
+      Status: <span style="font-weight: bold; color: ${isCancelada ? '#f87171' : '#feffe0'};">${statusTexto}</span><br>
+      ${!isCancelada ? `<button onclick="cancelarConsulta(${index})">Cancelar</button>` : ''}
+    `;
+    lista.appendChild(div);
+  });
+}
+
 function mostrarEspecialistas(dia) {
-  document.querySelectorAll('#segunda, #terca, #quarta, #quinta, #sexta')
-    .forEach(div => div.style.display = 'none');
+  document.querySelectorAll('#segunda, #terca, #quarta, #quinta, #sexta').forEach(div => div.style.display = 'none');
   const elementoDia = document.getElementById(dia);
   if (elementoDia) {
     elementoDia.style.display = 'grid';
   }
-}
-
-function agendarConsulta(especialidade) {
-  const elemento = document.getElementById("especialidadeSelecionada");
-  elemento.innerText = "Especialidade: " + especialidade;
-  const diasPermitidos = disponibilidade[especialidade];
-  if (diasPermitidos) {
-    elemento.innerText += " | Dias disponíveis: " + diasPermitidos.join(", ");
-  }
-  document.getElementById("modalAgendamento").classList.add("show"); 
-}
-
-function fecharModal() {
-  document.getElementById("modalAgendamento").classList.remove("show"); 
 }
 
 function sairDaConta() {
@@ -814,101 +2037,22 @@ function sairDaConta() {
   window.location.reload();
 }
 
-// 4. Confirmação e Validação do Agendamento
-function confirmarAgendamento() {
-  const nome = document.getElementById("nomePaciente").value;
-  const data = document.getElementById("dataConsulta").value;
-  const hora = document.getElementById("horaConsulta").value;
-  
-  const elEspecialidade = document.getElementById("especialidadeSelecionada");
-  const especialidade = elEspecialidade.innerText.split(" |")[0].replace("Especialidade: ", "").trim();
+function toggleFaq(botao) {
+  const itemAtual = botao.closest(".faq-item");
+  const estaAberto = itemAtual.classList.contains("active");
 
-  // Validação de campos vazios
-  if (!nome || !data || !hora) {
-    Swal.fire({ 
-      title: "Campos obrigatórios", 
-      text: "Preencha todos os dados antes de confirmar.", 
-      icon: "warning",
-      confirmButtonColor: "#739970"
-    });
-    return;
-  }
-
-  // Cria objeto de data preservando fuso horário local
-  const [ano, mes, dia] = data.split("-").map(Number);
-  const dataObj = new Date(ano, mes - 1, dia);
-
-  const diaSemana = dataObj.getDay();
-  const nomeDia = nomesDias[diaSemana];
-
-  // Bloqueio de finais de semana
-  if (diaSemana === 0 || diaSemana === 6) {
-    Swal.fire({ 
-      title: "Agendamento não permitido", 
-      text: "Consultas não podem ser marcadas em finais de semana.", 
-      icon: "error", 
-      confirmButtonColor: "#739970" 
-    });
-    return;
-  }
-
-  // Verifica se o especialista atende nesse dia da semana
-  const diasPermitidos = disponibilidade[especialidade];
-  if (!diasPermitidos || !diasPermitidos.includes(nomeDia)) {
-    Swal.fire({ 
-      title: "Agendamento não permitido", 
-      text: `O especialista em ${especialidade} não atende na ${nomeDia}.`, 
-      icon: "error", 
-      confirmButtonColor: "#739970" 
-    });
-    return;
-  }
-
-  // Validação do intervalo de horários (08h às 16h, de 30 em 30 min)
-  const [horaSelecionada, minutosSelecionados] = hora.split(":").map(Number);
-  if (horaSelecionada < 8 || horaSelecionada >= 16 || minutosSelecionados % 30 !== 0) {
-    Swal.fire({ 
-      title: "Horário inválido", 
-      text: "As consultas só podem ser agendadas entre 08h e 16h, em intervalos de 30 minutos.", 
-      icon: "error", 
-      confirmButtonColor: "#739970" 
-    });
-    return;
-  }
-
-  // Verificação de duplicidade/conflito no localStorage
-  let consultas = JSON.parse(localStorage.getItem("consultas")) || [];
-  const dataExibicao = dataObj.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" });
-
-  const existe = consultas.some(c => c.especialidade === especialidade && c.data === dataExibicao && c.hora === hora);
-  if (existe) {
-    Swal.fire({ 
-      title: "Conflito de agendamento", 
-      text: "Já existe uma consulta agendada para essa especialidade neste mesmo dia e horário.", 
-      icon: "error", 
-      confirmButtonColor: "#739970" 
-    });
-    return;
-  }
-
-  // Grava o agendamento no localStorage
-  const consulta = { nome, data: dataExibicao, hora, especialidade };
-  consultas.push(consulta);
-  localStorage.setItem("consultas", JSON.stringify(consultas));
-
-  // Confirmação com SweetAlert2
-  Swal.fire({ 
-    title: "Consulta Confirmada!", 
-    text: `${nome}, sua consulta de ${especialidade} foi marcada para ${dataExibicao} às ${hora}.`, 
-    icon: "success", 
-    confirmButtonColor: "#739970" 
-  }).then(() => {
-    fecharModal();
+  document.querySelectorAll(".faq-item").forEach((item) => {
+    item.classList.remove("active");
+    const btn = item.querySelector(".faq-pergunta");
+    if (btn) btn.setAttribute("aria-expanded", "false");
   });
+
+  if (!estaAberto) {
+    itemAtual.classList.add("active");
+    botao.setAttribute("aria-expanded", "true");
+  }
 }
 </script>
+
 </body>
 </html>
-
-
-
